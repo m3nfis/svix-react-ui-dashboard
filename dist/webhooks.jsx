@@ -158,12 +158,13 @@ function ApiCredentials({ info }) {
 
 // ── Drop-in HOC ─────────────────────────────────────────────────────────
 
-function SvixWebhooksDashboard({ config }) {
+function SvixWebhooksDashboard({ config, className }) {
   const merged = React.useMemo(() => _mergeSvixConfig(config), [config]);
+  const cls = ['svix-ui', className].filter(Boolean).join(' ');
 
   return React.createElement(
     SvixConfigContext.Provider,
     { value: merged },
-    React.createElement(WebhooksPage)
+    React.createElement('div', { className: cls }, React.createElement(WebhooksPage))
   );
 }
