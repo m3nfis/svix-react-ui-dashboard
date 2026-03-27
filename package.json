@@ -1,0 +1,14 @@
+{
+  "name": "@m3nfis/svix-react-ui-dashboard",
+  "version": "0.1.0",
+  "description": "Script-tag React UI modules for Svix-style webhook dashboards",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/webhooks.jsx",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/m3nfis/svix-react-ui-dashboard.git"
+  }
+}
