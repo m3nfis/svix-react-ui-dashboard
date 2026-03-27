@@ -8,7 +8,18 @@ function WebhooksPage() {
   const [showGuide, setShowGuide] = useState(() => !localStorage.getItem('vibey_wh_guide_dismissed'));
   const [showDocs, setShowDocs] = useState(false);
 
-  useEffect(() => { api('/api/webhooks/info').then(setInfo).catch(() => {}); }, []);
+  useEffect(() => {
+    api('/api/webhooks/info')
+      .then((data) => {
+        setInfo(data);
+        globalThis.__vibeySvixClient = {
+          apiUrl: data.api_url,
+          authToken: data.auth_token,
+          appUid: data.app_uid,
+        };
+      })
+      .catch(() => {});
+  }, []);
 
   const dismissGuide = () => { setShowGuide(false); localStorage.setItem('vibey_wh_guide_dismissed', '1'); };
 

@@ -12,9 +12,7 @@ function ApiDocsPage({ info, onBack }) {
   }, []);
 
   useEffect(() => {
-    fetch('/api/webhooks/svix/event-type/', {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('vibey_token')}`, 'Content-Type': 'application/json' },
-    }).then(r => r.json()).then(d => setEventTypes(d.data || [])).catch(() => {});
+    svix('GET', 'event-type/').then(d => setEventTypes(d.data || [])).catch(() => {});
   }, []);
 
   const copy = (text, key) => {

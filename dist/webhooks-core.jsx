@@ -1,9 +1,39 @@
 // ── Webhooks shared primitives ─────────────────────────────────────────
 
 function svix(method, path, body) {
-  const opts = { method };
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+  };
   if (body) opts.body = JSON.stringify(body);
-  return api(`/api/webhooks/svix/${path}`, opts);
+
+  const cfg = globalThis.__vibeySvixClient;
+  if (!cfg?.apiUrl || !cfg?.authToken || !cfg?.appUid) {
+    // Backward-compatible fallback while direct client config is loading.
+    return api(`/api/webhooks/svix/${path}`, opts);
+  }
+
+  const base = cfg.apiUrl.replace(/\/+$/, '');
+  let resolvedPath = '';
+  if (path.startsWith('app/')) {
+    resolvedPath = `${base}/api/v1/app/${cfg.appUid}/${path.slice(4)}`;
+  } else if (path.startsWith('event-type')) {
+    resolvedPath = `${base}/api/v1/${path}`;
+  } else {
+    throw new Error(`Unsupported Svix path: ${path}`);
+  }
+
+  opts.headers.Authorization = `Bearer ${cfg.authToken}`;
+
+  return fetch(resolvedPath, opts).then(async (res) => {
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch { data = { raw: text }; }
+    if (!res.ok) {
+      throw new Error(data?.detail || data?.message || `Svix ${res.status}`);
+    }
+    return data;
+  });
 }
 
 const ATTEMPT_STATUS = {
