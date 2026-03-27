@@ -53,7 +53,7 @@ function EndpointsPanel() {
           <p>Add your first webhook endpoint to start receiving events</p>
         </div>
       ) : (
-        <table className="wh-table">
+        <div className="wh-table-wrap"><table className="wh-table">
           <thead><tr><th>URL</th><th>Description</th><th>Status</th><th>Created</th><th style={{width:36}}></th></tr></thead>
           <tbody>
             {endpoints.map(ep => (
@@ -70,7 +70,7 @@ function EndpointsPanel() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       )}
       <div style={{color:'var(--text-dim)',fontSize:12,marginTop:12}}>
         {endpoints.length} endpoint{endpoints.length !== 1 ? 's' : ''}
@@ -102,7 +102,7 @@ function AddEndpointForm({ onDone }) {
   return (
     <form className="wh-form" onSubmit={submit}>
       {error && <div className="error-banner">{error}</div>}
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+      <div className="wh-grid-2" style={{marginBottom:12}}>
         <div className="field">
           <label>Endpoint URL</label>
           <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://your-server.com/webhook" required />
@@ -243,7 +243,7 @@ function EndpointDetail({ id, onBack }) {
       <div style={{marginBottom:20}}>
         {editing ? (
           <div className="wh-form" style={{marginBottom:0}}>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+            <div className="wh-grid-2" style={{marginBottom:12}}>
               <div className="field"><label>URL</label><input value={editUrl} onChange={e => setEditUrl(e.target.value)} /></div>
               <div className="field"><label>Description</label><input value={editDesc} onChange={e => setEditDesc(e.target.value)} /></div>
             </div>
@@ -273,8 +273,8 @@ function EndpointDetail({ id, onBack }) {
         )}
       </div>
 
-      <div style={{display:'flex',gap:24}}>
-        <div style={{flex:1,minWidth:0}}>
+      <div className="wh-detail-layout">
+        <div className="wh-detail-main">
           <div className="wh-tabs">
             {detailSubTabs.map(([k, label]) => (
               <button key={k} className={`wh-tab ${subTab===k?'active':''}`} onClick={() => setSubTab(k)}>{label}</button>
@@ -325,7 +325,7 @@ function EndpointDetail({ id, onBack }) {
                 return filtered.length === 0 ? (
                   <div className="wh-empty"><p>{attemptFilter === 'all' ? 'No delivery attempts yet' : `No ${attemptFilter} attempts`}</p></div>
                 ) : (
-                  <table className="wh-table">
+                  <div className="wh-table-wrap"><table className="wh-table">
                     <thead><tr><th>Status</th><th>HTTP</th><th>Message ID</th><th>Timestamp</th><th></th></tr></thead>
                     <tbody>
                       {filtered.map(att => (
@@ -342,7 +342,7 @@ function EndpointDetail({ id, onBack }) {
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                  </table></div>
                 );
               })()}
               {(cfg.messages.recoverFailed || cfg.messages.replayMissing) && (
@@ -358,7 +358,7 @@ function EndpointDetail({ id, onBack }) {
           {subTab === 'advanced' && <EndpointAdvanced ep={ep} id={id} onUpdate={load} />}
         </div>
 
-        <div style={{width:240,flexShrink:0}}>
+        <div className="wh-detail-sidebar">
           <div className="wh-api-card" style={{padding:20}}>
             <div style={{marginBottom:20}}>
               <div style={{fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--text-dim)',marginBottom:4}}>Status</div>

@@ -104,9 +104,9 @@ function ApiDocsPage({ info, onBack }) {
   ];
 
   return (
-    <div style={{ display: 'flex', height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
+    <div className="wh-docs-layout">
       {/* Sidebar */}
-      <div style={{ width: 230, flexShrink: 0, borderRight: '1px solid var(--border)', overflowY: 'auto', padding: '16px 0', background: 'var(--surface)' }}>
+      <div className="wh-docs-sidebar">
         <div style={{ padding: '0 14px 14px', borderBottom: '1px solid var(--border)', marginBottom: 10 }}>
           <button className="btn-sm btn-ghost" onClick={onBack} style={{ fontSize: 11, padding: '3px 10px', marginBottom: 8 }}>
             ← Back to Webhooks
@@ -133,7 +133,7 @@ function ApiDocsPage({ info, onBack }) {
       </div>
 
       {/* Main content */}
-      <div ref={contentRef} style={{ flex: 1, overflowY: 'auto', padding: '28px 36px 80px' }}>
+      <div ref={contentRef} className="wh-docs-content">
         {/* Overview */}
         <div data-section="overview">
           <h2 style={{ marginBottom: 6 }}>Svix API Reference</h2>
@@ -153,7 +153,7 @@ function ApiDocsPage({ info, onBack }) {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+          <div className="wh-grid-3 wh-api-card" style={{ padding: 16, marginBottom: 16 }}>
             <div>
               <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-dim)', marginBottom: 4 }}>Your App UID</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

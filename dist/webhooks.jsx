@@ -56,7 +56,7 @@ function WebhooksPage() {
   return (
     <div style={{display:'flex',flexDirection:'column',height:'calc(100vh - 64px)'}}>
       {cfg.ui.showHeader && (
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12,flexShrink:0}}>
+        <div className="wh-page-header">
           <div>
             <h2>{cfg.ui.title}</h2>
             <div className="page-sub" style={{marginBottom:0}}>
@@ -66,7 +66,7 @@ function WebhooksPage() {
               )}
             </div>
           </div>
-          <div style={{display:'flex',gap:8,marginTop:4}}>
+          <div className="wh-page-header-actions">
             {cfg.ui.showGuide && !showGuide && (
               <button className="btn-sm btn-ghost" onClick={() => setShowGuide(true)}>How it works</button>
             )}
@@ -121,7 +121,7 @@ function ApiCredentials({ info }) {
 
   return (
     <div className="wh-api-card" style={{marginBottom:12,flexShrink:0}}>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
+      <div className="wh-grid-3">
         <div>
           <div style={{fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--text-dim)',marginBottom:4}}>API URL</div>
           <div style={{display:'flex',alignItems:'center',gap:6}}><code style={{fontSize:11}}>{info.api_url}</code><button className="btn-sm btn-ghost" style={{padding:'3px 8px',fontSize:10}} onClick={() => copy(info.api_url,'url')}>{copied==='url'?'Done':'Copy'}</button></div>

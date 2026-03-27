@@ -73,7 +73,7 @@ function LogsPanel() {
 
       {showFilters && (
         <div className="wh-api-card" style={{marginBottom:12,padding:16}}>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,marginBottom:12}}>
+          <div className="wh-grid-3" style={{marginBottom:12}}>
             <div>
               <div style={{fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--text-dim)',marginBottom:4}}>Event Type</div>
               <input value={filterType} onChange={e => setFilterType(e.target.value)}
@@ -90,7 +90,7 @@ function LogsPanel() {
                 placeholder="Filter by channel" style={{width:'100%',padding:'6px 10px',fontSize:12}} />
             </div>
           </div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
+          <div className="wh-grid-3">
             <div>
               <div style={{fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--text-dim)',marginBottom:4}}>After</div>
               <input type="datetime-local" value={afterDate} onChange={e => setAfterDate(e.target.value)}
@@ -117,7 +117,7 @@ function LogsPanel() {
           <p>{hasFilters ? 'Try adjusting your filters' : 'Messages will appear here as they are sent through the webhook service'}</p>
         </div>
       ) : (
-        <table className="wh-table">
+        <div className="wh-table-wrap"><table className="wh-table">
           <thead><tr><th>Event Type</th><th>Message ID</th><th>Channels</th><th>Timestamp</th></tr></thead>
           <tbody>
             {messages.map(msg => (
@@ -133,7 +133,7 @@ function LogsPanel() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       )}
       <div style={{color:'var(--text-dim)',fontSize:12,marginTop:12}}>
         {messages.length} message{messages.length !== 1 ? 's' : ''}
@@ -270,7 +270,7 @@ function ActivityPanel() {
         <div className="wh-empty"><p>Loading activity data...</p></div>
       ) : (
         <>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16,marginBottom:24}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))',gap:16,marginBottom:24}}>
             <div className="wh-api-card" style={{textAlign:'center',padding:20}}>
               <div style={{fontSize:28,fontWeight:700,color:'var(--accent)'}}>{endpoints.length}</div>
               <div style={{fontSize:12,color:'var(--text-dim)',marginTop:4}}>Active Endpoints</div>
