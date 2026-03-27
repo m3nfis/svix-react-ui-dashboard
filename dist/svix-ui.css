@@ -108,35 +108,36 @@
 .svix-ui textarea { resize: vertical; min-height: 80px; }
 
 .svix-ui button {
-  background: var(--accent);
-  color: #fff;
+  background: none;
+  color: var(--text);
   border: none;
   padding: 10px 20px;
   border-radius: var(--radius);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
+  font-family: inherit;
 }
-.svix-ui button:hover { background: var(--accent-hover); }
 .svix-ui button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── Buttons ───────────────────────────────────────────── */
-.btn-sm { padding: 6px 14px; font-size: 12px; }
+.svix-ui .btn-sm { padding: 6px 14px; font-size: 12px; background: var(--accent); color: #fff; }
+.svix-ui .btn-sm:hover { background: var(--accent-hover); }
 
-.btn-ghost {
+.svix-ui .btn-ghost {
   background: transparent;
   color: var(--text-dim);
   border: 1px solid var(--border);
 }
-.btn-ghost:hover { background: var(--surface-hover); color: var(--text); }
+.svix-ui .btn-ghost:hover { background: var(--surface-hover); color: var(--text); }
 
-.btn-danger {
+.svix-ui .btn-danger {
   background: rgba(248,113,113,0.15);
   color: var(--red);
   border: 1px solid rgba(248,113,113,0.3);
 }
-.btn-danger:hover { background: rgba(248,113,113,0.25); }
+.svix-ui .btn-danger:hover { background: rgba(248,113,113,0.25); }
 
 /* ── Badges ────────────────────────────────────────────── */
 .badge {
@@ -151,15 +152,15 @@
   display: flex; gap: 2px; margin-bottom: 24px;
   border-bottom: 1px solid var(--border);
 }
-.wh-tab {
+.svix-ui .wh-tab {
   padding: 10px 20px; font-size: 13px; font-weight: 600;
   color: var(--text-dim); cursor: pointer;
-  border-bottom: 2px solid transparent;
+  border-bottom: 2px solid transparent; border-top: none; border-left: none; border-right: none;
   transition: color 0.15s, border-color 0.15s;
   background: none; border-radius: 0;
 }
-.wh-tab:hover { color: var(--text); background: none; }
-.wh-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: none; }
+.svix-ui .wh-tab:hover { color: var(--text); background: none; }
+.svix-ui .wh-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: none; }
 
 /* ── Toolbar ───────────────────────────────────────────── */
 .wh-toolbar {
@@ -259,12 +260,12 @@
   position: relative;
 }
 .modal-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-.modal-close {
+.svix-ui .modal-close {
   position: absolute; top: 16px; right: 16px;
   background: none; border: none; color: var(--text-dim);
   font-size: 18px; cursor: pointer; padding: 4px 8px; line-height: 1;
 }
-.modal-close:hover { color: var(--text); background: none; }
+.svix-ui .modal-close:hover { color: var(--text); background: none; }
 .modal-footer {
   display: flex; justify-content: flex-end; gap: 8px;
   margin-top: 24px; padding-top: 16px;
@@ -293,16 +294,16 @@
   display: flex; gap: 0;
   border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
 }
-.pill-btn {
+.svix-ui .pill-btn {
   padding: 6px 14px; font-size: 12px; font-weight: 600;
   background: none; border: none;
   border-right: 1px solid var(--border);
   color: var(--text-dim); cursor: pointer; border-radius: 0;
   transition: background 0.15s, color 0.15s;
 }
-.pill-btn:last-child { border-right: none; }
-.pill-btn:hover { background: var(--surface-hover); color: var(--text); }
-.pill-btn.active { background: rgba(124,92,252,0.15); color: var(--accent); }
+.svix-ui .pill-btn:last-child { border-right: none; }
+.svix-ui .pill-btn:hover { background: var(--surface-hover); color: var(--text); }
+.svix-ui .pill-btn.active { background: rgba(124,92,252,0.15); color: var(--accent); }
 
 /* ── Utility ───────────────────────────────────────────── */
 .mono { font-family: 'SF Mono','Menlo','Consolas',monospace; }
