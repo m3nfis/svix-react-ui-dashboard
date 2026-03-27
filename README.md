@@ -2,152 +2,90 @@
 
 Drop-in React UI for managing [Svix](https://github.com/svix/svix-webhooks) webhooks — endpoints, event catalog, message logs, activity overview, and a full API reference page.
 
-Built for **script-tag** apps (React 18 UMD + Babel standalone). No build step required. Works with any self-hosted or cloud Svix instance.
-
----
-
-## Features
-
-- **Endpoints** — create, edit, disable, delete webhook endpoints; view delivery stats and attempts; manage signing secrets, custom headers, rate limits, channels
-- **Event Catalog** — create and manage event types with dot-notation grouping; per-event-type custom retry schedules (aggressive / standard / relaxed / custom)
-- **Message Logs** — browse messages with filters (event type, date range, tags, channels); inspect payloads (formatted / raw JSON); jump to message by ID
-- **Activity Overview** — at-a-glance stats for endpoints, messages, success/failure rates; recent messages and delivery attempts
-- **Health Alerts** — banner for auto-disabled endpoints and exhausted retries
-- **API Docs** — interactive API reference page with copy-paste cURL examples pre-filled with the user's credentials
-- **Developer Guide** — collapsible "How it works" explainer covering quick-start, retry policy, signature verification, channels, message recovery, and more
-- **Dark / Light theme** — ships both palettes via CSS custom properties
-- **Fully overridable CSS** — every variable and class can be replaced to match your dashboard
-- **Drop-in HOC** — `<SvixWebhooksDashboard config={...} />` renders the entire UI; pass a single config object to control every tab, button, and feature per client
-
----
-
-## Install
+Works with any self-hosted or cloud Svix instance. No build step required.
 
 ```bash
 npm install @m3nfis/svix-react-ui-dashboard
 ```
 
-Or reference the Git repo directly:
+---
 
-```bash
-npm install git+https://github.com/m3nfis/svix-react-ui-dashboard.git
+## Usage
+
+```jsx
+// app.jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { SvixWebhooksDashboard } from '@m3nfis/svix-react-ui-dashboard';
+import '@m3nfis/svix-react-ui-dashboard/dist/svix-ui.css';
+
+function App() {
+  return (
+    <SvixWebhooksDashboard config={{
+      connection: {
+        apiUrl: 'https://webhooks.your-domain.com',
+        authToken: 'svix_sk_...',
+        appUid: 'app_xxx',
+      },
+    }} />
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+```
+
+That's it — one component, full webhook management UI.
+
+---
+
+## Restricting Features Per Client
+
+Every button, tab, and action can be toggled off. Only pass the overrides you need — everything defaults to `true`.
+
+```jsx
+// read-only-client.jsx — a client that can only view, not modify
+import { SvixWebhooksDashboard } from '@m3nfis/svix-react-ui-dashboard';
+
+function WebhookViewer({ apiUrl, authToken, appUid }) {
+  return (
+    <SvixWebhooksDashboard config={{
+      connection: { apiUrl, authToken, appUid },
+      tabs: {
+        activity: false,               // hide Activity tab
+      },
+      ui: {
+        title: 'My Webhooks',
+        subtitle: 'Manage your integrations',
+        showGuide: false,              // hide "How it works"
+        showApiCredentials: false,     // hide API Credentials panel
+        showApiDocs: false,            // hide API Docs button
+      },
+      endpoints: {
+        create: false,                 // hide "+ Add Endpoint"
+        delete: false,                 // hide delete from menus
+        disable: false,                // hide enable/disable toggle
+        rotateSecret: false,           // hide secret rotation
+      },
+      messages: {
+        replay: false,                 // hide replay on attempts
+        resend: false,                 // hide retry button
+        recoverFailed: false,          // hide recover failed
+        replayMissing: false,          // hide replay missing
+        bulkReplay: false,             // hide bulk replay
+      },
+      eventTypes: {
+        create: false,                 // hide "+ Add Event Type"
+        delete: false,                 // hide delete on types
+        editRetrySchedule: false,      // hide retry schedule editor
+      },
+    }} />
+  );
+}
 ```
 
 ---
 
-## Quick Start
-
-### 1. Serve the `dist/` folder
-
-Mount the installed package as a static route in your app server:
-
-```js
-// Express example
-const path = require('path');
-
-app.use(
-  '/vendor/svix-ui',
-  express.static(
-    path.join(__dirname, 'node_modules', '@m3nfis', 'svix-react-ui-dashboard', 'dist')
-  )
-);
-```
-
-### 2. Load the default stylesheet
-
-Add the CSS **before** your own stylesheet so your overrides take precedence:
-
-```html
-<link rel="stylesheet" href="/vendor/svix-ui/svix-ui.css" />
-<link rel="stylesheet" href="/your-dashboard.css" />
-```
-
-### 3. Load the JSX scripts
-
-Scripts must be loaded **in order**, after React 18 UMD + Babel standalone:
-
-```html
-<!-- React 18 + Babel (already in your app) -->
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-<!-- Svix UI modules (order matters) -->
-<script type="text/babel" src="/vendor/svix-ui/webhooks-core.jsx"></script>
-<script type="text/babel" src="/vendor/svix-ui/webhooks-explainer.jsx"></script>
-<script type="text/babel" src="/vendor/svix-ui/webhooks-banner.jsx"></script>
-<script type="text/babel" src="/vendor/svix-ui/webhooks-docs.jsx"></script>
-<script type="text/babel" src="/vendor/svix-ui/webhooks-activity.jsx"></script>
-<script type="text/babel" src="/vendor/svix-ui/webhooks-events.jsx"></script>
-<script type="text/babel" src="/vendor/svix-ui/webhooks-endpoints.jsx"></script>
-<script type="text/babel" src="/vendor/svix-ui/webhooks.jsx"></script>
-```
-
-### 4. Render the component
-
-```jsx
-<WebhooksPage />
-```
-
----
-
-## Drop-in HOC
-
-Use `SvixWebhooksDashboard` when you want a single component that contains the entire UI. Pass a `config` prop to control which tabs, buttons, and features are visible.
-
-### Basic usage
-
-```jsx
-<SvixWebhooksDashboard config={{
-  connection: {
-    apiUrl: 'https://webhooks.your-domain.com',
-    authToken: 'svix_sk_...',
-    appUid: 'app_xxx',
-  },
-}} />
-```
-
-### Restricting features per client
-
-```jsx
-<SvixWebhooksDashboard config={{
-  connection: {
-    apiUrl: 'https://webhooks.your-domain.com',
-    authToken: userToken,
-    appUid: userAppUid,
-  },
-  tabs: {
-    endpoints: true,
-    eventCatalog: true,
-    logs: true,
-    activity: false,             // hide the Activity tab
-  },
-  ui: {
-    title: 'My Webhooks',
-    subtitle: 'Manage your integrations',
-    showGuide: false,            // hide "How it works" explainer
-    showApiCredentials: false,   // hide API Credentials panel
-    showApiDocs: false,          // hide API Docs button
-  },
-  endpoints: {
-    create: false,               // hide "+ Add Endpoint" button
-    delete: false,               // hide delete from context menus
-    rotateSecret: false,         // hide secret rotation
-  },
-  messages: {
-    replay: false,               // hide all replay actions
-    resend: false,               // hide retry button on attempts
-    bulkReplay: false,           // hide bulk replay option
-  },
-  eventTypes: {
-    create: false,               // hide "+ Add Event Type"
-    delete: false,               // hide delete on event types
-    editRetrySchedule: false,    // hide retry schedule editor
-  },
-}} />
-```
-
-### Full `config` reference
+## Full `config` Reference
 
 Every property is **optional** — omitted values use the defaults shown below (all features enabled).
 
@@ -217,26 +155,108 @@ Every property is **optional** — omitted values use the defaults shown below (
 }
 ```
 
-### Without the HOC
+---
 
-`WebhooksPage` still works as a standalone component for backward compatibility. When rendered without `SvixWebhooksDashboard`, all features are enabled by default and it reads credentials from `api('/api/webhooks/info')` as before.
+## Features
+
+- **Endpoints** — create, edit, disable, delete webhook endpoints; view delivery stats and attempts; manage signing secrets, custom headers, rate limits, channels
+- **Event Catalog** — create and manage event types with dot-notation grouping; per-event-type custom retry schedules (aggressive / standard / relaxed / custom)
+- **Message Logs** — browse messages with filters (event type, date range, tags, channels); inspect payloads (formatted / raw JSON); jump to message by ID
+- **Activity Overview** — at-a-glance stats for endpoints, messages, success/failure rates; recent messages and delivery attempts
+- **Health Alerts** — banner for auto-disabled endpoints and exhausted retries
+- **API Docs** — interactive API reference page with copy-paste cURL examples pre-filled with the user's credentials
+- **Developer Guide** — collapsible "How it works" explainer covering quick-start, retry policy, signature verification, channels, message recovery, and more
+- **Dark / Light theme** — ships both palettes via CSS custom properties
+- **Fully overridable CSS** — every variable and class can be replaced to match your dashboard
 
 ---
 
-## Required Globals
+## Install
 
-The scripts expect a few globals to be available before they load:
+```bash
+npm install @m3nfis/svix-react-ui-dashboard
+```
+
+Or reference the Git repo directly:
+
+```bash
+npm install git+https://github.com/m3nfis/svix-react-ui-dashboard.git
+```
+
+---
+
+## Script-Tag Setup (no bundler)
+
+If your app uses React via UMD script tags instead of a bundler, load the modules directly:
+
+### 1. Serve the `dist/` folder
+
+Mount the installed package as a static route in your app server:
+
+```js
+const path = require('path');
+
+app.use(
+  '/vendor/svix-ui',
+  express.static(
+    path.join(__dirname, 'node_modules', '@m3nfis', 'svix-react-ui-dashboard', 'dist')
+  )
+);
+```
+
+### 2. Load CSS and scripts
+
+```html
+<!-- Stylesheet (before your own CSS so overrides win) -->
+<link rel="stylesheet" href="/vendor/svix-ui/svix-ui.css" />
+<link rel="stylesheet" href="/your-dashboard.css" />
+
+<!-- React 18 + Babel (already in your app) -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Svix UI modules (order matters) -->
+<script type="text/babel" src="/vendor/svix-ui/webhooks-core.jsx"></script>
+<script type="text/babel" src="/vendor/svix-ui/webhooks-explainer.jsx"></script>
+<script type="text/babel" src="/vendor/svix-ui/webhooks-banner.jsx"></script>
+<script type="text/babel" src="/vendor/svix-ui/webhooks-docs.jsx"></script>
+<script type="text/babel" src="/vendor/svix-ui/webhooks-activity.jsx"></script>
+<script type="text/babel" src="/vendor/svix-ui/webhooks-events.jsx"></script>
+<script type="text/babel" src="/vendor/svix-ui/webhooks-endpoints.jsx"></script>
+<script type="text/babel" src="/vendor/svix-ui/webhooks.jsx"></script>
+```
+
+### 3. Render
+
+```jsx
+<SvixWebhooksDashboard config={{
+  connection: {
+    apiUrl: 'https://webhooks.your-domain.com',
+    authToken: 'svix_sk_...',
+    appUid: 'app_xxx',
+  },
+}} />
+```
+
+### Required globals (script-tag mode only)
 
 | Global | Type | Purpose |
 |--------|------|---------|
 | `React` | object | React 18 (via UMD) |
 | `ReactDOM` | object | ReactDOM 18 (via UMD) |
-| `useState`, `useEffect`, `useCallback`, `useRef` | functions | Destructured from React — define them as `const { useState, useEffect, useCallback, useRef } = React;` |
-| `api(url, opts?)` | function | Your authenticated fetch wrapper — must return parsed JSON. Used for health-alerts and webhook info endpoints. |
+| `useState`, `useEffect`, `useCallback`, `useRef` | functions | Destructured from React |
+| `api(url, opts?)` | function | Your authenticated fetch wrapper (returns parsed JSON). Only needed if not passing `connection.apiUrl/authToken/appUid` directly. |
 
-### Svix API Connection
+---
 
-The entry component (`WebhooksPage`) calls `api('/api/webhooks/info')` on mount and expects a response with:
+## Svix API Connection
+
+The component connects to Svix in one of two ways:
+
+**Option A — Direct credentials** (recommended): pass `apiUrl`, `authToken`, and `appUid` in `config.connection`. The component calls the Svix API directly from the browser.
+
+**Option B — Info endpoint**: if credentials are omitted, the component calls `api(config.connection.infoEndpoint)` on mount and expects:
 
 ```json
 {
@@ -245,8 +265,6 @@ The entry component (`WebhooksPage`) calls `api('/api/webhooks/info')` on mount 
   "app_uid": "app_xxx"
 }
 ```
-
-It stores these on `globalThis.__vibeySvixClient` so all sub-components can call the Svix API directly — no backend proxy required.
 
 ---
 
@@ -321,13 +339,13 @@ All components are plain functions on the global scope (no ES module exports). L
 | `webhooks-activity.jsx` | `LogsPanel`, `MessageDetail`, `ActivityPanel` | core |
 | `webhooks-events.jsx` | `RetryScheduleEditor`, `EventCatalogPanel`, `AddEventTypeForm` | core |
 | `webhooks-endpoints.jsx` | `EndpointsPanel`, `AddEndpointForm`, `EndpointDetail`, `EndpointTesting`, `EndpointAdvanced` | core, activity |
-| `webhooks.jsx` | `WebhooksPage`, `ApiCredentials`, **`SvixWebhooksDashboard`** | all above |
+| `webhooks.jsx` | **`SvixWebhooksDashboard`**, `WebhooksPage`, `ApiCredentials` | all above |
 
 ---
 
 ## API Contract
 
-The `svix()` helper in `webhooks-core.jsx` talks directly to the Svix HTTP API. It reads credentials from `globalThis.__vibeySvixClient` (set by `WebhooksPage` on mount).
+The `svix()` helper in `webhooks-core.jsx` talks directly to the Svix HTTP API. It reads credentials from `globalThis.__vibeySvixClient` (set by `SvixWebhooksDashboard` on mount).
 
 If `__vibeySvixClient` is not yet available (initial render), it falls back to calling `api('/api/webhooks/svix/...')` — a backend proxy you may optionally provide.
 
@@ -365,14 +383,14 @@ If `__vibeySvixClient` is not yet available (initial render), it falls back to c
 svix-react-ui-dashboard/
 ├── dist/
 │   ├── svix-ui.css                # Default dark/light theme
-│   ├── webhooks-core.jsx          # Shared primitives, API client, modals
+│   ├── webhooks-core.jsx          # Config context, API client, shared modals
 │   ├── webhooks-explainer.jsx     # "How it works" developer guide
 │   ├── webhooks-banner.jsx        # Health alerts banner
 │   ├── webhooks-docs.jsx          # Interactive API reference page
 │   ├── webhooks-activity.jsx      # Logs, message detail, activity overview
 │   ├── webhooks-events.jsx        # Event catalog + retry schedule editor
 │   ├── webhooks-endpoints.jsx     # Endpoints CRUD, detail, testing, advanced
-│   └── webhooks.jsx               # Entry component (WebhooksPage)
+│   └── webhooks.jsx               # SvixWebhooksDashboard HOC + WebhooksPage
 ├── .gitignore
 ├── LICENSE                        # MIT
 ├── package.json
