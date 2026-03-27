@@ -8,7 +8,7 @@ function ApiDocsPage({ info, onBack }) {
 
   useEffect(() => {
     svix('GET', 'app/endpoint/').catch(() => {});
-    api('/api/webhooks/info').catch(() => {});
+    if (typeof api === 'function') api('/api/webhooks/info').catch(() => {});
   }, []);
 
   useEffect(() => {

@@ -8,7 +8,7 @@ function HealthAlertsBanner() {
   const [expanded, setExpanded] = useState(false);
 
   const load = useCallback(() => {
-    if (!cfg.ui.showHealthAlerts) return;
+    if (!cfg.ui.showHealthAlerts || typeof api !== 'function') return;
     api(cfg.connection.healthAlertsEndpoint || '/api/webhooks/health-alerts').then(d => {
       setAlerts(d.alerts || []);
       setUnacked(d.unacknowledged || 0);
@@ -18,10 +18,12 @@ function HealthAlertsBanner() {
   useEffect(() => { load(); const t = setInterval(load, 60000); return () => clearInterval(t); }, [load]);
 
   const ack = async (id) => {
+    if (typeof api !== 'function') return;
     await api(`/api/webhooks/health-alerts/${id}/acknowledge`, { method: 'POST' }).catch(() => {});
     load();
   };
   const ackAll = async () => {
+    if (typeof api !== 'function') return;
     await api('/api/webhooks/health-alerts/acknowledge-all', { method: 'POST' }).catch(() => {});
     load();
   };

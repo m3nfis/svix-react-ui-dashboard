@@ -80,7 +80,7 @@ function svix(method, path, body) {
 
   const cfg = globalThis.__vibeySvixClient;
   if (!cfg?.apiUrl || !cfg?.authToken || !cfg?.appUid) {
-    // Backward-compatible fallback while direct client config is loading.
+    if (typeof api !== 'function') return Promise.reject(new Error('Svix client not configured and no api() fallback'));
     return api(`/api/webhooks/svix/${path}`, opts);
   }
 
