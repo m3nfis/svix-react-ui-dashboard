@@ -1,14 +1,32 @@
 {
   "name": "@m3nfis/svix-react-ui-dashboard",
-  "version": "0.1.0",
-  "description": "Script-tag React UI modules for Svix-style webhook dashboards",
+  "version": "0.2.0",
+  "description": "Drop-in React UI for managing Svix webhooks — endpoints, event catalog, logs, activity, and API docs. Works with any self-hosted or cloud Svix instance.",
+  "keywords": [
+    "svix",
+    "webhooks",
+    "dashboard",
+    "react",
+    "ui",
+    "webhook-management"
+  ],
   "files": [
     "dist"
   ],
   "main": "dist/webhooks.jsx",
+  "style": "dist/svix-ui.css",
   "license": "MIT",
+  "author": "m3nfis",
   "repository": {
     "type": "git",
     "url": "https://github.com/m3nfis/svix-react-ui-dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/m3nfis/svix-react-ui-dashboard/issues"
+  },
+  "homepage": "https://github.com/m3nfis/svix-react-ui-dashboard#readme",
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
   }
 }
