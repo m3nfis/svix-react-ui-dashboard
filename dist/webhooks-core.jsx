@@ -132,23 +132,41 @@ function formatRetryInterval(seconds) {
 
 function ContextMenu({ items }) {
   const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
   const ref = useRef(null);
+  const btnRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
     const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const reposition = () => {
+      if (btnRef.current) {
+        const r = btnRef.current.getBoundingClientRect();
+        setPos({ top: r.bottom + 4, left: r.right });
+      }
+    };
     document.addEventListener('mousedown', close);
-    return () => document.removeEventListener('mousedown', close);
+    globalThis.addEventListener('scroll', reposition, true);
+    return () => { document.removeEventListener('mousedown', close); globalThis.removeEventListener('scroll', reposition, true); };
   }, [open]);
 
+  const toggle = (e) => {
+    e.stopPropagation();
+    if (!open && btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 4, left: r.right });
+    }
+    setOpen(!open);
+  };
+
   return (
-    <div ref={ref} style={{position:'relative',display:'inline-block'}}>
-      <button className="btn-sm btn-ghost" onClick={e => { e.stopPropagation(); setOpen(!open); }}
+    <div ref={ref} style={{display:'inline-block'}}>
+      <button ref={btnRef} className="btn-sm btn-ghost" onClick={toggle}
         style={{padding:'2px 8px',fontSize:16,lineHeight:1}}>⋮</button>
       {open && (
-        <div style={{position:'absolute',right:0,top:'100%',zIndex:50,minWidth:140,
+        <div style={{position:'fixed',top:pos.top,left:pos.left,transform:'translateX(-100%)',zIndex:9999,minWidth:140,
           background:'var(--surface)',border:'1px solid var(--border)',borderRadius:8,
-          boxShadow:'0 4px 12px rgba(0,0,0,0.15)',padding:'4px 0',marginTop:4}}>
+          boxShadow:'0 4px 12px rgba(0,0,0,0.15)',padding:'4px 0'}}>
           {items.map((item, i) => (
             <button key={i} onClick={e => { e.stopPropagation(); item.onClick(); setOpen(false); }}
               style={{display:'block',width:'100%',textAlign:'left',padding:'8px 14px',fontSize:12,
