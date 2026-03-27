@@ -67,8 +67,10 @@ function WebhooksPage() {
             </div>
           </div>
           <div className="wh-page-header-actions">
-            {cfg.ui.showGuide && !showGuide && (
-              <button className="btn-sm btn-ghost" onClick={() => setShowGuide(true)}>How it works</button>
+            {cfg.ui.showGuide && (
+              <button className="btn-sm btn-ghost" onClick={() => setShowGuide(!showGuide)}>
+                {showGuide ? 'Hide guide' : 'How it works'}
+              </button>
             )}
             {cfg.ui.showApiCredentials && (
               <button className="btn-sm btn-ghost" onClick={() => setShowApi(!showApi)}>
@@ -83,9 +85,7 @@ function WebhooksPage() {
       )}
       <HealthAlertsBanner />
       {cfg.ui.showGuide && showGuide && (
-        <div style={{position:'relative',flexShrink:0}}>
-          <button className="btn-sm btn-ghost" onClick={dismissGuide}
-            style={{position:'absolute',top:12,right:12,padding:'2px 8px',fontSize:11,zIndex:1}}>Dismiss</button>
+        <div style={{flexShrink:0}}>
           <WebhookExplainer info={info} />
         </div>
       )}
