@@ -2,64 +2,101 @@
 // Depends: prior webhooks-*.jsx scripts + webhooks-core.jsx
 
 function WebhooksPage() {
-  const [tab, setTab] = useState('endpoints');
+  const cfg = useSvixConfig();
+  const [tab, setTab] = useState(null);
   const [info, setInfo] = useState(null);
   const [showApi, setShowApi] = useState(false);
   const [showGuide, setShowGuide] = useState(() => !localStorage.getItem('vibey_wh_guide_dismissed'));
   const [showDocs, setShowDocs] = useState(false);
 
+  const visibleTabs = [
+    cfg.tabs.endpoints    && ['endpoints',     'Endpoints'],
+    cfg.tabs.eventCatalog && ['event-catalog',  'Event Catalog'],
+    cfg.tabs.logs         && ['logs',           'Logs'],
+    cfg.tabs.activity     && ['activity',       'Activity'],
+  ].filter(Boolean);
+
   useEffect(() => {
-    api('/api/webhooks/info')
-      .then((data) => {
-        setInfo(data);
-        globalThis.__vibeySvixClient = {
-          apiUrl: data.api_url,
-          authToken: data.auth_token,
-          appUid: data.app_uid,
-        };
-      })
-      .catch(() => {});
+    if (!tab && visibleTabs.length) setTab(visibleTabs[0][0]);
+  }, []);
+
+  useEffect(() => {
+    const conn = cfg.connection;
+    if (conn.apiUrl && conn.authToken && conn.appUid) {
+      globalThis.__vibeySvixClient = {
+        apiUrl: conn.apiUrl,
+        authToken: conn.authToken,
+        appUid: conn.appUid,
+      };
+      setInfo({ api_url: conn.apiUrl, auth_token: conn.authToken, app_uid: conn.appUid });
+      return;
+    }
+
+    const endpoint = conn.infoEndpoint || '/api/webhooks/info';
+    if (typeof api === 'function') {
+      api(endpoint)
+        .then((data) => {
+          setInfo(data);
+          globalThis.__vibeySvixClient = {
+            apiUrl: data.api_url,
+            authToken: data.auth_token,
+            appUid: data.app_uid,
+          };
+        })
+        .catch(() => {});
+    }
   }, []);
 
   const dismissGuide = () => { setShowGuide(false); localStorage.setItem('vibey_wh_guide_dismissed', '1'); };
 
-  if (showDocs) {
+  if (showDocs && cfg.ui.showApiDocs) {
     return React.createElement(ApiDocsPage, { info, onBack: () => setShowDocs(false) });
   }
 
   return (
     <div style={{display:'flex',flexDirection:'column',height:'calc(100vh - 64px)'}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12,flexShrink:0}}>
-        <div>
-          <h2>Webhooks</h2>
-          <div className="page-sub" style={{marginBottom:0}}>
-            Reliable webhook relay for your apps — powered by <a href="https://github.com/svix/svix-webhooks" target="_blank" rel="noopener" style={{color:'var(--accent)'}}>Svix</a>
+      {cfg.ui.showHeader && (
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12,flexShrink:0}}>
+          <div>
+            <h2>{cfg.ui.title}</h2>
+            <div className="page-sub" style={{marginBottom:0}}>
+              {cfg.ui.subtitle}
+              {cfg.ui.svixLink && (
+                <> — powered by <a href={cfg.ui.svixLink} target="_blank" rel="noopener" style={{color:'var(--accent)'}}>Svix</a></>
+              )}
+            </div>
+          </div>
+          <div style={{display:'flex',gap:8,marginTop:4}}>
+            {cfg.ui.showGuide && !showGuide && (
+              <button className="btn-sm btn-ghost" onClick={() => setShowGuide(true)}>How it works</button>
+            )}
+            {cfg.ui.showApiCredentials && (
+              <button className="btn-sm btn-ghost" onClick={() => setShowApi(!showApi)}>
+                {showApi ? 'Hide API' : 'API Credentials'}
+              </button>
+            )}
+            {cfg.ui.showApiDocs && (
+              <button className="btn-sm btn-ghost" onClick={() => setShowDocs(true)}>API Docs</button>
+            )}
           </div>
         </div>
-        <div style={{display:'flex',gap:8,marginTop:4}}>
-          {!showGuide && (
-            <button className="btn-sm btn-ghost" onClick={() => setShowGuide(true)}>How it works</button>
-          )}
-          <button className="btn-sm btn-ghost" onClick={() => setShowApi(!showApi)}>
-            {showApi ? 'Hide API' : 'API Credentials'}
-          </button>
-          <button className="btn-sm btn-ghost" onClick={() => setShowDocs(true)}>API Docs</button>
-        </div>
-      </div>
+      )}
       <HealthAlertsBanner />
-      {showGuide && (
+      {cfg.ui.showGuide && showGuide && (
         <div style={{position:'relative',flexShrink:0}}>
           <button className="btn-sm btn-ghost" onClick={dismissGuide}
             style={{position:'absolute',top:12,right:12,padding:'2px 8px',fontSize:11,zIndex:1}}>Dismiss</button>
           <WebhookExplainer info={info} />
         </div>
       )}
-      {showApi && info && <ApiCredentials info={info} />}
-      <div className="wh-tabs" style={{flexShrink:0}}>
-        {[['endpoints','Endpoints'],['event-catalog','Event Catalog'],['logs','Logs'],['activity','Activity']].map(([k,label]) => (
-          <button key={k} className={`wh-tab ${tab===k?'active':''}`} onClick={() => setTab(k)}>{label}</button>
-        ))}
-      </div>
+      {cfg.ui.showApiCredentials && showApi && info && <ApiCredentials info={info} />}
+      {visibleTabs.length > 0 && (
+        <div className="wh-tabs" style={{flexShrink:0}}>
+          {visibleTabs.map(([k, label]) => (
+            <button key={k} className={`wh-tab ${tab===k?'active':''}`} onClick={() => setTab(k)}>{label}</button>
+          ))}
+        </div>
+      )}
       <div style={{flex:1,minHeight:0,overflowY:'auto'}}>
         {tab === 'endpoints' && <EndpointsPanel />}
         {tab === 'event-catalog' && <EventCatalogPanel />}
@@ -116,5 +153,17 @@ function ApiCredentials({ info }) {
         </div>
       </details>
     </div>
+  );
+}
+
+// ── Drop-in HOC ─────────────────────────────────────────────────────────
+
+function SvixWebhooksDashboard({ config }) {
+  const merged = React.useMemo(() => _mergeSvixConfig(config), [config]);
+
+  return React.createElement(
+    SvixConfigContext.Provider,
+    { value: merged },
+    React.createElement(WebhooksPage)
   );
 }

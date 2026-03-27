@@ -2,6 +2,7 @@
 // Depends: webhooks-core.jsx (svix, DEFAULT_RETRY_SCHEDULE, formatRetryInterval)
 
 function RetryScheduleEditor({ eventTypeName }) {
+  const cfg = useSvixConfig();
   const [schedule, setSchedule] = useState(null);
   const [isCustom, setIsCustom] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -63,7 +64,7 @@ function RetryScheduleEditor({ eventTypeName }) {
         'Retry Schedule',
         isCustom && React.createElement('span', {style:{fontSize:10,marginLeft:6,padding:'1px 6px',borderRadius:4,background:'rgba(124,92,252,0.15)',color:'var(--accent)'}}, 'Custom')
       ),
-      React.createElement('div', {style:{display:'flex',gap:6}},
+      cfg.eventTypes.editRetrySchedule && React.createElement('div', {style:{display:'flex',gap:6}},
         !editing && React.createElement('button', {className:'btn-sm btn-ghost',style:{padding:'2px 8px',fontSize:10},onClick:() => { setEditing(true); if (!input) setInput(activeSchedule.join(', ')); }}, 'Edit'),
         isCustom && !editing && React.createElement('button', {className:'btn-sm btn-ghost',style:{padding:'2px 8px',fontSize:10,color:'var(--red)'},onClick:reset}, 'Reset')
       )
@@ -95,6 +96,7 @@ function RetryScheduleEditor({ eventTypeName }) {
 }
 
 function EventCatalogPanel() {
+  const cfg = useSvixConfig();
   const [eventTypes, setEventTypes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
@@ -152,13 +154,15 @@ function EventCatalogPanel() {
               style={{borderRadius:0,fontSize:11,padding:'4px 10px'}}
               onClick={() => setScope('all')}>All</button>
           </div>
-          <button className="btn-sm" onClick={() => setShowAdd(!showAdd)}>
-            {showAdd ? 'Cancel' : '+ Add Event Type'}
-          </button>
+          {cfg.eventTypes.create && (
+            <button className="btn-sm" onClick={() => setShowAdd(!showAdd)}>
+              {showAdd ? 'Cancel' : '+ Add Event Type'}
+            </button>
+          )}
         </div>
       </div>
       {error && <div className="error-banner">{error}</div>}
-      {showAdd && <AddEventTypeForm onDone={() => { setShowAdd(false); load(); }} />}
+      {showAdd && cfg.eventTypes.create && <AddEventTypeForm onDone={() => { setShowAdd(false); load(); }} />}
 
       {loading ? (
         <div className="wh-empty"><p>Loading event types...</p></div>
@@ -227,8 +231,8 @@ function EventCatalogPanel() {
                     )}
                   </div>
                   <div style={{display:'flex',gap:6,marginLeft:12}}>
-                    <button className="btn-sm btn-ghost" onClick={() => { setEditingType(et.name); setEditDesc(et.description || ''); }}>Edit</button>
-                    <button className="btn-sm btn-danger" onClick={() => handleDelete(et.name)}>Delete</button>
+                    {cfg.eventTypes.edit && <button className="btn-sm btn-ghost" onClick={() => { setEditingType(et.name); setEditDesc(et.description || ''); }}>Edit</button>}
+                    {cfg.eventTypes.delete && <button className="btn-sm btn-danger" onClick={() => handleDelete(et.name)}>Delete</button>}
                   </div>
                 </div>
                 <RetryScheduleEditor eventTypeName={et.name} />

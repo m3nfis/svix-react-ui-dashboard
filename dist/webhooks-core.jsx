@@ -1,5 +1,76 @@
 // ── Webhooks shared primitives ─────────────────────────────────────────
 
+// ── Config context ────────────────────────────────────────────────────
+const DEFAULT_SVIX_UI_CONFIG = {
+  connection: {
+    apiUrl: null,
+    authToken: null,
+    appUid: null,
+    infoEndpoint: '/api/webhooks/info',
+    healthAlertsEndpoint: '/api/webhooks/health-alerts',
+  },
+  tabs: {
+    endpoints: true,
+    eventCatalog: true,
+    logs: true,
+    activity: true,
+  },
+  ui: {
+    title: 'Webhooks',
+    subtitle: 'Reliable webhook relay for your apps',
+    svixLink: 'https://github.com/svix/svix-webhooks',
+    showHeader: true,
+    showHealthAlerts: true,
+    showGuide: true,
+    showApiCredentials: true,
+    showApiDocs: true,
+  },
+  endpoints: {
+    create: true,
+    edit: true,
+    delete: true,
+    disable: true,
+    rotateSecret: true,
+    customHeaders: true,
+    rateLimiting: true,
+    channels: true,
+    testWebhook: true,
+  },
+  messages: {
+    viewPayload: true,
+    replay: true,
+    resend: true,
+    recoverFailed: true,
+    replayMissing: true,
+    bulkReplay: true,
+  },
+  eventTypes: {
+    create: true,
+    edit: true,
+    delete: true,
+    editRetrySchedule: true,
+  },
+};
+
+function _mergeSvixConfig(overrides) {
+  const d = DEFAULT_SVIX_UI_CONFIG;
+  if (!overrides) return { ...d };
+  return {
+    connection: { ...d.connection, ...overrides.connection },
+    tabs:       { ...d.tabs,       ...overrides.tabs },
+    ui:         { ...d.ui,         ...overrides.ui },
+    endpoints:  { ...d.endpoints,  ...overrides.endpoints },
+    messages:   { ...d.messages,   ...overrides.messages },
+    eventTypes: { ...d.eventTypes, ...overrides.eventTypes },
+  };
+}
+
+const SvixConfigContext = React.createContext(null);
+function useSvixConfig() {
+  return React.useContext(SvixConfigContext) || DEFAULT_SVIX_UI_CONFIG;
+}
+
+// ── Svix API client ───────────────────────────────────────────────────
 function svix(method, path, body) {
   const opts = {
     method,

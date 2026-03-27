@@ -2,6 +2,7 @@
 // Depends: webhooks-core.jsx; webhooks-activity.jsx (MessageDetail)
 
 function EndpointsPanel() {
+  const cfg = useSvixConfig();
   const [endpoints, setEndpoints] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,13 +22,27 @@ function EndpointsPanel() {
     return <EndpointDetail id={selectedId} onBack={() => { setSelectedId(null); load(); }} />;
   }
 
+  const ctxItems = (ep) => {
+    const items = [];
+    if (cfg.endpoints.disable) items.push({ label: ep.disabled ? 'Enable' : 'Disable', onClick: () =>
+      svix('PATCH', `app/endpoint/${ep.id}/`, { disabled: !ep.disabled }).then(load).catch(() => {})
+    });
+    if (cfg.endpoints.delete) items.push({ label: 'Delete', danger: true, onClick: () => {
+      if (confirm('Delete this endpoint?'))
+        svix('DELETE', `app/endpoint/${ep.id}/`).then(load).catch(() => {});
+    }});
+    return items;
+  };
+
   return (
     <>
       <div className="wh-toolbar">
         <h3>Webhook Endpoints</h3>
-        <button className="btn-sm" onClick={() => setShowAdd(!showAdd)}>
-          {showAdd ? 'Cancel' : '+ Add Endpoint'}
-        </button>
+        {cfg.endpoints.create && (
+          <button className="btn-sm" onClick={() => setShowAdd(!showAdd)}>
+            {showAdd ? 'Cancel' : '+ Add Endpoint'}
+          </button>
+        )}
       </div>
       {showAdd && <AddEndpointForm onDone={() => { setShowAdd(false); load(); }} />}
       {loading ? (
@@ -51,17 +66,7 @@ function EndpointsPanel() {
                   : <span className="badge badge-active">Active</span>}
                 </td>
                 <td style={{color:'var(--text-dim)',fontSize:12}}>{new Date(ep.createdAt).toLocaleDateString()}</td>
-                <td>
-                  <ContextMenu items={[
-                    { label: ep.disabled ? 'Enable' : 'Disable', onClick: () =>
-                      svix('PATCH', `app/endpoint/${ep.id}/`, { disabled: !ep.disabled }).then(load).catch(() => {})
-                    },
-                    { label: 'Delete', danger: true, onClick: () => {
-                      if (confirm('Delete this endpoint?'))
-                        svix('DELETE', `app/endpoint/${ep.id}/`).then(load).catch(() => {});
-                    }},
-                  ]} />
-                </td>
+                <td>{ctxItems(ep).length > 0 && <ContextMenu items={ctxItems(ep)} />}</td>
               </tr>
             ))}
           </tbody>
@@ -117,6 +122,7 @@ function AddEndpointForm({ onDone }) {
 }
 
 function EndpointDetail({ id, onBack }) {
+  const cfg = useSvixConfig();
   const [ep, setEp] = useState(null);
   const [secret, setSecret] = useState(null);
   const [showSecret, setShowSecret] = useState(false);
@@ -207,20 +213,31 @@ function EndpointDetail({ id, onBack }) {
   const pendingCount = attempts.filter(a => a.status === 1 || a.status === 3).length;
   const totalAttempts = attempts.length;
 
+  const headerMenuItems = [];
+  if (cfg.messages.recoverFailed) headerMenuItems.push({ label: 'Recover failed messages...', onClick: () => setShowRecoverFailed(true) });
+  if (cfg.messages.replayMissing) headerMenuItems.push({ label: 'Replay missing messages...', onClick: () => setShowReplayMissing(true) });
+  if (cfg.messages.bulkReplay) headerMenuItems.push({ label: 'Bulk replay messages...', onClick: () => setShowBulkReplay(true) });
+  if (cfg.endpoints.disable) headerMenuItems.push({ label: ep.disabled ? 'Enable Endpoint' : 'Disable Endpoint', onClick: toggleDisabled });
+  if (cfg.endpoints.delete) headerMenuItems.push({ label: 'Delete', danger: true, onClick: () => {
+    if (confirm('Delete this endpoint? This cannot be undone.'))
+      svix('DELETE', `app/endpoint/${id}/`).then(onBack).catch(err => alert(err.message));
+  }});
+
+  const attemptMenuItems = (att) => {
+    const items = [{ label: 'View message', onClick: () => openMessage(att.msgId) }];
+    if (cfg.messages.replay) items.push({ label: 'Replay...', onClick: () => setReplayAtt(att) });
+    return items;
+  };
+
+  const detailSubTabs = [['overview', 'Overview']];
+  if (cfg.endpoints.testWebhook) detailSubTabs.push(['testing', 'Testing']);
+  if (cfg.endpoints.rateLimiting || cfg.endpoints.customHeaders || cfg.endpoints.channels) detailSubTabs.push(['advanced', 'Advanced']);
+
   return (
     <div>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
         <a onClick={onBack} style={{cursor:'pointer',color:'var(--accent)',fontSize:13}}>← Back to Endpoints</a>
-        <ContextMenu items={[
-          { label: 'Recover failed messages...', onClick: () => setShowRecoverFailed(true) },
-          { label: 'Replay missing messages...', onClick: () => setShowReplayMissing(true) },
-          { label: 'Bulk replay messages...', onClick: () => setShowBulkReplay(true) },
-          { label: ep.disabled ? 'Enable Endpoint' : 'Disable Endpoint', onClick: toggleDisabled },
-          { label: 'Delete', danger: true, onClick: () => {
-            if (confirm('Delete this endpoint? This cannot be undone.'))
-              svix('DELETE', `app/endpoint/${id}/`).then(onBack).catch(err => alert(err.message));
-          }},
-        ]} />
+        {headerMenuItems.length > 0 && <ContextMenu items={headerMenuItems} />}
       </div>
 
       <div style={{marginBottom:20}}>
@@ -245,11 +262,13 @@ function EndpointDetail({ id, onBack }) {
               <div className="wh-url" style={{fontSize:15,marginBottom:4}}>{ep.url}</div>
               <div style={{color:'var(--text-dim)',fontSize:13}}>{ep.description || 'No description'}</div>
             </div>
-            <button className="btn-sm btn-ghost" onClick={() => {
-              setEditUrl(ep.url); setEditDesc(ep.description || '');
-              setEditFilters((ep.filterTypes || []).join(', '));
-              setEditing(true);
-            }}>Edit</button>
+            {cfg.endpoints.edit && (
+              <button className="btn-sm btn-ghost" onClick={() => {
+                setEditUrl(ep.url); setEditDesc(ep.description || '');
+                setEditFilters((ep.filterTypes || []).join(', '));
+                setEditing(true);
+              }}>Edit</button>
+            )}
           </div>
         )}
       </div>
@@ -257,9 +276,9 @@ function EndpointDetail({ id, onBack }) {
       <div style={{display:'flex',gap:24}}>
         <div style={{flex:1,minWidth:0}}>
           <div className="wh-tabs">
-            <button className={`wh-tab ${subTab==='overview'?'active':''}`} onClick={() => setSubTab('overview')}>Overview</button>
-            <button className={`wh-tab ${subTab==='testing'?'active':''}`} onClick={() => setSubTab('testing')}>Testing</button>
-            <button className={`wh-tab ${subTab==='advanced'?'active':''}`} onClick={() => setSubTab('advanced')}>Advanced</button>
+            {detailSubTabs.map(([k, label]) => (
+              <button key={k} className={`wh-tab ${subTab===k?'active':''}`} onClick={() => setSubTab(k)}>{label}</button>
+            ))}
           </div>
 
           {subTab === 'overview' && (
@@ -319,22 +338,19 @@ function EndpointDetail({ id, onBack }) {
                             <a onClick={() => openMessage(att.msgId)} style={{cursor:'pointer',color:'var(--accent)',textDecoration:'none'}}>{att.msgId}</a>
                           </td>
                           <td style={{fontSize:12,color:'var(--text-dim)'}}>{new Date(att.timestamp).toLocaleString()}</td>
-                          <td>
-                            <ContextMenu items={[
-                              { label: 'View message', onClick: () => openMessage(att.msgId) },
-                              { label: 'Replay...', onClick: () => setReplayAtt(att) },
-                            ]} />
-                          </td>
+                          <td><ContextMenu items={attemptMenuItems(att)} /></td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 );
               })()}
-              <div style={{marginTop:12,display:'flex',gap:8}}>
-                <button className="btn-sm btn-ghost" onClick={() => setShowRecoverFailed(true)}>Recover Failed</button>
-                <button className="btn-sm btn-ghost" onClick={() => setShowReplayMissing(true)}>Replay Missing</button>
-              </div>
+              {(cfg.messages.recoverFailed || cfg.messages.replayMissing) && (
+                <div style={{marginTop:12,display:'flex',gap:8}}>
+                  {cfg.messages.recoverFailed && <button className="btn-sm btn-ghost" onClick={() => setShowRecoverFailed(true)}>Recover Failed</button>}
+                  {cfg.messages.replayMissing && <button className="btn-sm btn-ghost" onClick={() => setShowReplayMissing(true)}>Replay Missing</button>}
+                </div>
+              )}
             </>
           )}
 
@@ -349,8 +365,10 @@ function EndpointDetail({ id, onBack }) {
               {ep.disabled
                 ? <span className="badge badge-planned">Disabled</span>
                 : <span className="badge badge-active">Active</span>}
-              <button className="btn-sm btn-ghost" style={{marginLeft:8,padding:'3px 8px',fontSize:10}}
-                onClick={toggleDisabled}>{ep.disabled ? 'Enable' : 'Disable'}</button>
+              {cfg.endpoints.disable && (
+                <button className="btn-sm btn-ghost" style={{marginLeft:8,padding:'3px 8px',fontSize:10}}
+                  onClick={toggleDisabled}>{ep.disabled ? 'Enable' : 'Disable'}</button>
+              )}
             </div>
 
             <div style={{marginBottom:20}}>
@@ -397,33 +415,41 @@ function EndpointDetail({ id, onBack }) {
                 {showSecret && secret && (
                   <button className="btn-sm btn-ghost" style={{padding:'3px 8px',fontSize:10}} onClick={() => copyText(secret.key)}>Copy</button>
                 )}
-                <button className="btn-sm btn-ghost" style={{padding:'3px 8px',fontSize:10,color:'var(--yellow)'}} onClick={rotateSecret}>Rotate</button>
+                {cfg.endpoints.rotateSecret && (
+                  <button className="btn-sm btn-ghost" style={{padding:'3px 8px',fontSize:10,color:'var(--yellow)'}} onClick={rotateSecret}>Rotate</button>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <ReplayMessageModal open={!!replayAtt} onClose={() => setReplayAtt(null)}
-        attempt={replayAtt} endpointId={id} onDone={() => setTimeout(load, 1000)} />
+      {cfg.messages.replay && (
+        <ReplayMessageModal open={!!replayAtt} onClose={() => setReplayAtt(null)}
+          attempt={replayAtt} endpointId={id} onDone={() => setTimeout(load, 1000)} />
+      )}
 
-      <TimePresetModal open={showRecoverFailed} onClose={() => setShowRecoverFailed(false)}
-        title="Recover Failed Messages"
-        description="This operation will cause all failed messages to this endpoint to be resent."
-        actionLabel="Recover"
-        onSubmit={async (since) => {
-          await svix('POST', `app/endpoint/${id}/recover/`, { since });
-          setTimeout(load, 2000);
-        }} />
+      {cfg.messages.recoverFailed && (
+        <TimePresetModal open={showRecoverFailed} onClose={() => setShowRecoverFailed(false)}
+          title="Recover Failed Messages"
+          description="This operation will cause all failed messages to this endpoint to be resent."
+          actionLabel="Recover"
+          onSubmit={async (since) => {
+            await svix('POST', `app/endpoint/${id}/recover/`, { since });
+            setTimeout(load, 2000);
+          }} />
+      )}
 
-      <TimePresetModal open={showReplayMissing} onClose={() => setShowReplayMissing(false)}
-        title="Replay Missing Messages"
-        description="This operation will cause all messages that were never attempted for this endpoint to be resent."
-        actionLabel="Replay"
-        onSubmit={async (since) => {
-          await svix('POST', `app/endpoint/${id}/replay-missing/`, { since });
-          setTimeout(load, 2000);
-        }} />
+      {cfg.messages.replayMissing && (
+        <TimePresetModal open={showReplayMissing} onClose={() => setShowReplayMissing(false)}
+          title="Replay Missing Messages"
+          description="This operation will cause all messages that were never attempted for this endpoint to be resent."
+          actionLabel="Replay"
+          onSubmit={async (since) => {
+            await svix('POST', `app/endpoint/${id}/replay-missing/`, { since });
+            setTimeout(load, 2000);
+          }} />
+      )}
     </div>
   );
 }
@@ -483,6 +509,7 @@ function EndpointTesting({ endpointId, onSent }) {
 }
 
 function EndpointAdvanced({ ep, id, onUpdate }) {
+  const cfg = useSvixConfig();
   const [rateLimit, setRateLimit] = useState(ep.rateLimit || '');
   const [headers, setHeaders] = useState(ep.headers || {});
   const [newHeaderKey, setNewHeaderKey] = useState('');
@@ -554,7 +581,7 @@ function EndpointAdvanced({ ep, id, onUpdate }) {
         </div>
       </div>
 
-      <div className="wh-api-card" style={{marginBottom:16}}>
+      {cfg.endpoints.rateLimiting && <div className="wh-api-card" style={{marginBottom:16}}>
         <h4>Rate Limiting</h4>
         <p style={{fontSize:12,color:'var(--text-dim)',marginBottom:12}}>
           Limit the number of webhook deliveries per second to this endpoint.
@@ -565,9 +592,9 @@ function EndpointAdvanced({ ep, id, onUpdate }) {
           <span style={{fontSize:12,color:'var(--text-dim)'}}>requests/second</span>
           <button className="btn-sm" onClick={saveRateLimit} disabled={saving}>Save</button>
         </div>
-      </div>
+      </div>}
 
-      <div className="wh-api-card" style={{marginBottom:16}}>
+      {cfg.endpoints.customHeaders && <div className="wh-api-card" style={{marginBottom:16}}>
         <h4>Custom Headers</h4>
         <p style={{fontSize:12,color:'var(--text-dim)',marginBottom:12}}>
           Add custom HTTP headers sent with every webhook delivery to this endpoint.
@@ -597,9 +624,9 @@ function EndpointAdvanced({ ep, id, onUpdate }) {
           </div>
           <button className="btn-sm" onClick={addHeader}>Add</button>
         </div>
-      </div>
+      </div>}
 
-      <div className="wh-api-card">
+      {cfg.endpoints.channels && <div className="wh-api-card">
         <h4>Channels</h4>
         <p style={{fontSize:12,color:'var(--text-dim)',marginBottom:12}}>
           Restrict this endpoint to only receive messages sent to specific channels.
@@ -610,7 +637,7 @@ function EndpointAdvanced({ ep, id, onUpdate }) {
             placeholder="channel1, channel2" style={{flex:1,padding:'6px 10px',fontSize:13}} />
           <button className="btn-sm" onClick={saveChannels} disabled={saving}>Save</button>
         </div>
-      </div>
+      </div>}
     </>
   );
 }

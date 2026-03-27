@@ -2,12 +2,14 @@
 // Depends: shared (api)
 
 function HealthAlertsBanner() {
+  const cfg = useSvixConfig();
   const [alerts, setAlerts] = useState([]);
   const [unacked, setUnacked] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
   const load = useCallback(() => {
-    api('/api/webhooks/health-alerts').then(d => {
+    if (!cfg.ui.showHealthAlerts) return;
+    api(cfg.connection.healthAlertsEndpoint || '/api/webhooks/health-alerts').then(d => {
       setAlerts(d.alerts || []);
       setUnacked(d.unacknowledged || 0);
     }).catch(() => {});
@@ -24,7 +26,7 @@ function HealthAlertsBanner() {
     load();
   };
 
-  if (unacked === 0) return null;
+  if (!cfg.ui.showHealthAlerts || unacked === 0) return null;
 
   const active = alerts.filter(a => !a.acknowledged);
   const alertLabel = (type) =>

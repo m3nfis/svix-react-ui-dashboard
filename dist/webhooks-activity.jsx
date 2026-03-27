@@ -143,6 +143,7 @@ function LogsPanel() {
 }
 
 function MessageDetail({ msg, onBack }) {
+  const cfg = useSvixConfig();
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [jsonView, setJsonView] = useState('formatted');
@@ -216,13 +217,15 @@ function MessageDetail({ msg, onBack }) {
                   {att.response || '—'}
                 </td>
                 <td style={{fontSize:12,color:'var(--text-dim)'}}>{new Date(att.timestamp).toLocaleString()}</td>
-                <td>
-                  <button className="btn-sm btn-ghost" onClick={() => {
-                    svix('POST', `app/msg/${msg.id}/endpoint/${att.endpointId}/resend/`, {})
-                      .then(() => alert('Message resent'))
-                      .catch(err => alert('Retry failed: ' + err.message));
-                  }}>Retry</button>
-                </td>
+                {cfg.messages.resend && (
+                  <td>
+                    <button className="btn-sm btn-ghost" onClick={() => {
+                      svix('POST', `app/msg/${msg.id}/endpoint/${att.endpointId}/resend/`, {})
+                        .then(() => alert('Message resent'))
+                        .catch(err => alert('Retry failed: ' + err.message));
+                    }}>Retry</button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

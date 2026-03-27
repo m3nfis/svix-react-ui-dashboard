@@ -17,6 +17,7 @@ Built for **script-tag** apps (React 18 UMD + Babel standalone). No build step r
 - **Developer Guide** — collapsible "How it works" explainer covering quick-start, retry policy, signature verification, channels, message recovery, and more
 - **Dark / Light theme** — ships both palettes via CSS custom properties
 - **Fully overridable CSS** — every variable and class can be replaced to match your dashboard
+- **Drop-in HOC** — `<SvixWebhooksDashboard config={...} />` renders the entire UI; pass a single config object to control every tab, button, and feature per client
 
 ---
 
@@ -87,6 +88,138 @@ Scripts must be loaded **in order**, after React 18 UMD + Babel standalone:
 ```jsx
 <WebhooksPage />
 ```
+
+---
+
+## Drop-in HOC
+
+Use `SvixWebhooksDashboard` when you want a single component that contains the entire UI. Pass a `config` prop to control which tabs, buttons, and features are visible.
+
+### Basic usage
+
+```jsx
+<SvixWebhooksDashboard config={{
+  connection: {
+    apiUrl: 'https://webhooks.your-domain.com',
+    authToken: 'svix_sk_...',
+    appUid: 'app_xxx',
+  },
+}} />
+```
+
+### Restricting features per client
+
+```jsx
+<SvixWebhooksDashboard config={{
+  connection: {
+    apiUrl: 'https://webhooks.your-domain.com',
+    authToken: userToken,
+    appUid: userAppUid,
+  },
+  tabs: {
+    endpoints: true,
+    eventCatalog: true,
+    logs: true,
+    activity: false,             // hide the Activity tab
+  },
+  ui: {
+    title: 'My Webhooks',
+    subtitle: 'Manage your integrations',
+    showGuide: false,            // hide "How it works" explainer
+    showApiCredentials: false,   // hide API Credentials panel
+    showApiDocs: false,          // hide API Docs button
+  },
+  endpoints: {
+    create: false,               // hide "+ Add Endpoint" button
+    delete: false,               // hide delete from context menus
+    rotateSecret: false,         // hide secret rotation
+  },
+  messages: {
+    replay: false,               // hide all replay actions
+    resend: false,               // hide retry button on attempts
+    bulkReplay: false,           // hide bulk replay option
+  },
+  eventTypes: {
+    create: false,               // hide "+ Add Event Type"
+    delete: false,               // hide delete on event types
+    editRetrySchedule: false,    // hide retry schedule editor
+  },
+}} />
+```
+
+### Full `config` reference
+
+Every property is **optional** — omitted values use the defaults shown below (all features enabled).
+
+```js
+{
+  // ── Connection ────────────────────────────────────────
+  connection: {
+    apiUrl: null,               // Direct Svix API URL
+    authToken: null,            // Direct auth token
+    appUid: null,               // Direct app UID
+    // If apiUrl/authToken/appUid are null, the component
+    // fetches credentials from this endpoint via api():
+    infoEndpoint: '/api/webhooks/info',
+    healthAlertsEndpoint: '/api/webhooks/health-alerts',
+  },
+
+  // ── Tab visibility ────────────────────────────────────
+  tabs: {
+    endpoints: true,            // Endpoints tab
+    eventCatalog: true,         // Event Catalog tab
+    logs: true,                 // Message Logs tab
+    activity: true,             // Activity Overview tab
+  },
+
+  // ── Header & chrome ───────────────────────────────────
+  ui: {
+    title: 'Webhooks',          // Page heading
+    subtitle: 'Reliable webhook relay for your apps',
+    svixLink: 'https://github.com/svix/svix-webhooks',
+    showHeader: true,           // Entire top bar (title + buttons)
+    showHealthAlerts: true,     // Endpoint health alert banner
+    showGuide: true,            // "How it works" developer guide
+    showApiCredentials: true,   // API Credentials expand panel
+    showApiDocs: true,          // API Docs page button
+  },
+
+  // ── Endpoint permissions ──────────────────────────────
+  endpoints: {
+    create: true,               // "+ Add Endpoint" button
+    edit: true,                 // Edit button on endpoint detail
+    delete: true,               // Delete in context menus
+    disable: true,              // Enable/Disable toggle
+    rotateSecret: true,         // Rotate signing secret button
+    customHeaders: true,        // Custom Headers section (Advanced)
+    rateLimiting: true,         // Rate Limiting section (Advanced)
+    channels: true,             // Channels section (Advanced)
+    testWebhook: true,          // Testing tab on endpoint detail
+  },
+
+  // ── Message / attempt permissions ─────────────────────
+  messages: {
+    viewPayload: true,          // Message payload inspection
+    replay: true,               // Replay action on individual attempts
+    resend: true,               // Retry/Resend button on attempts
+    recoverFailed: true,        // "Recover Failed" time-preset modal
+    replayMissing: true,        // "Replay Missing" time-preset modal
+    bulkReplay: true,           // Bulk Replay view with filters
+  },
+
+  // ── Event type permissions ────────────────────────────
+  eventTypes: {
+    create: true,               // "+ Add Event Type" button
+    edit: true,                 // Edit description button
+    delete: true,               // Delete button
+    editRetrySchedule: true,    // Retry schedule editor per event type
+  },
+}
+```
+
+### Without the HOC
+
+`WebhooksPage` still works as a standalone component for backward compatibility. When rendered without `SvixWebhooksDashboard`, all features are enabled by default and it reads credentials from `api('/api/webhooks/info')` as before.
 
 ---
 
@@ -188,7 +321,7 @@ All components are plain functions on the global scope (no ES module exports). L
 | `webhooks-activity.jsx` | `LogsPanel`, `MessageDetail`, `ActivityPanel` | core |
 | `webhooks-events.jsx` | `RetryScheduleEditor`, `EventCatalogPanel`, `AddEventTypeForm` | core |
 | `webhooks-endpoints.jsx` | `EndpointsPanel`, `AddEndpointForm`, `EndpointDetail`, `EndpointTesting`, `EndpointAdvanced` | core, activity |
-| `webhooks.jsx` | `WebhooksPage`, `ApiCredentials` | all above |
+| `webhooks.jsx` | `WebhooksPage`, `ApiCredentials`, **`SvixWebhooksDashboard`** | all above |
 
 ---
 
