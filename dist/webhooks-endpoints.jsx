@@ -568,7 +568,7 @@ function EndpointAdvanced({ ep, id, onUpdate }) {
           {DEFAULT_RETRY_SCHEDULE.map((s, i) => (
             React.createElement(React.Fragment, {key: i},
               i > 0 && React.createElement('span', {style:{color:'var(--text-dim)',fontSize:10}}, '→'),
-              React.createElement('span', {style:{fontSize:11,padding:'3px 8px',borderRadius:6,background:'rgba(124,92,252,0.12)',color:'var(--accent)',fontWeight:600,fontFamily:'monospace'}}, formatRetryInterval(s))
+              React.createElement('span', {style:{fontSize:11,padding:'3px 8px',borderRadius:6,background:'rgba(59,130,246,0.08)',color:'var(--accent)',fontWeight:600,fontFamily:'monospace'}}, formatRetryInterval(s))
             )
           ))}
         </div>
@@ -576,12 +576,13 @@ function EndpointAdvanced({ ep, id, onUpdate }) {
           After {DEFAULT_RETRY_SCHEDULE.length} retries, the message is marked as <strong style={{color:'var(--red)'}}>Failed</strong>.
           {' '}Endpoints failing for 5 consecutive days are automatically disabled.
         </div>
-        <div style={{fontSize:12,color:'var(--accent)',marginTop:12,padding:'8px 12px',background:'rgba(124,92,252,0.08)',borderRadius:8}}>
+        <div style={{fontSize:12,color:'var(--accent)',marginTop:12,padding:'8px 12px',background:'rgba(59,130,246,0.06)',borderRadius:8}}>
           Custom retry schedules can be configured per event type in the <strong>Event Catalog</strong> tab.
         </div>
       </div>
 
       {cfg.endpoints.rateLimiting && <div className="wh-api-card" style={{marginBottom:16}}>
+
         <h4>Rate Limiting</h4>
         <p style={{fontSize:12,color:'var(--text-dim)',marginBottom:12}}>
           Limit the number of webhook deliveries per second to this endpoint.

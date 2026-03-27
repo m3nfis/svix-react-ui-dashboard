@@ -38,8 +38,8 @@ function HealthAlertsBanner() {
 
   return (
     <div style={{
-      background:'rgba(248,113,113,0.08)', border:'1px solid rgba(248,113,113,0.3)',
-      borderRadius:12, padding:'12px 16px', marginBottom:16, flexShrink:0,
+      background:'rgba(220,38,38,0.05)', border:'1px solid rgba(220,38,38,0.2)',
+      borderRadius:8, padding:'12px 16px', marginBottom:16, flexShrink:0,
     }}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
         <div style={{display:'flex',alignItems:'center',gap:8}}>

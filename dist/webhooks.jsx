@@ -117,7 +117,7 @@ function ApiCredentials({ info }) {
   const curlAddEndpoint = `curl -X POST ${info.api_url}/api/v1/app/${info.app_uid}/endpoint/ \\\n  ${authHeader} \\\n  ${contentHeader} \\\n  -d '{"url":"https://your-server.com/webhook","description":"My endpoint","filterTypes":["user.created","order.completed"]}'`;
   const curlAddEventType = `curl -X POST ${info.api_url}/api/v1/event-type/ \\\n  ${authHeader} \\\n  ${contentHeader} \\\n  -d '{"name":"order.completed","description":"Triggered when an order is completed"}'`;
 
-  const preStyle = {marginTop:6,background:'var(--bg)',border:'1px solid var(--border)',borderRadius:8,padding:12,fontSize:11,fontFamily:'SF Mono,Menlo,Consolas,monospace',color:'var(--text-dim)',whiteSpace:'pre-wrap',wordBreak:'break-all'};
+  const preStyle = {marginTop:6,background:'var(--bg)',border:'1px solid var(--border)',borderRadius:6,padding:12,fontSize:13,fontFamily:"'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace",color:'var(--text-dim)',whiteSpace:'pre-wrap',wordBreak:'break-all'};
 
   return (
     <div className="wh-api-card" style={{marginBottom:12,flexShrink:0}}>

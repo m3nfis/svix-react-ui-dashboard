@@ -5,7 +5,7 @@ function WebhookExplainer({ info }) {
   const stepStyle = {
     flex:1, textAlign:'center', padding:'16px 12px',
     background:'var(--surface)', border:'1px solid var(--border)',
-    borderRadius:12, position:'relative',
+    borderRadius:8, position:'relative',
   };
   const numStyle = {
     width:28, height:28, borderRadius:'50%', background:'var(--accent)',
@@ -19,8 +19,8 @@ function WebhookExplainer({ info }) {
   };
   const codeInline = { fontSize:11, background:'var(--surface)', padding:'2px 6px', borderRadius:4 };
   const preStyle = {
-    background:'var(--bg)', border:'1px solid var(--border)', borderRadius:8, padding:12, fontSize:11,
-    fontFamily:'SF Mono,Menlo,Consolas,monospace', color:'var(--text-dim)', whiteSpace:'pre-wrap', wordBreak:'break-all',
+    background:'var(--bg)', border:'1px solid var(--border)', borderRadius:6, padding:12, fontSize:13,
+    fontFamily:"'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace", color:'var(--text-dim)', whiteSpace:'pre-wrap', wordBreak:'break-all',
   };
   const sectionHead = {
     marginBottom:8, fontWeight:600, color:'var(--text)', fontSize:11,
@@ -278,7 +278,7 @@ Content-Type: application/json
             {DEFAULT_RETRY_SCHEDULE.map((s, i) => (
               React.createElement(React.Fragment, {key: i},
                 i > 0 && React.createElement('span', {style:{color:'var(--text-dim)',fontSize:10}}, '→'),
-                React.createElement('span', {style:{fontSize:11,padding:'3px 8px',borderRadius:6,background:'rgba(124,92,252,0.12)',color:'var(--accent)',fontWeight:600,fontFamily:'monospace'}}, formatRetryInterval(s))
+                React.createElement('span', {style:{fontSize:11,padding:'3px 8px',borderRadius:6,background:'rgba(59,130,246,0.08)',color:'var(--accent)',fontWeight:600,fontFamily:'monospace'}}, formatRetryInterval(s))
               )
             ))}
           </div>

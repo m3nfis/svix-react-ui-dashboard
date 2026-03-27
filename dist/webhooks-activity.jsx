@@ -194,7 +194,7 @@ function MessageDetail({ msg, onBack }) {
           </div>
         </div>
         <pre style={{background:'var(--bg)',border:'1px solid var(--border)',borderRadius:8,padding:16,fontSize:12,
-          fontFamily:'SF Mono,Menlo,Consolas,monospace',color:'var(--text-dim)',
+          fontFamily:"'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace",color:'var(--text-dim)',
           whiteSpace:'pre-wrap',wordBreak:'break-all',maxHeight:400,overflowY:'auto'}}>
           {jsonView === 'formatted' ? JSON.stringify(msg.payload, null, 2) : JSON.stringify(msg.payload)}
         </pre>

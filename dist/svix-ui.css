@@ -1,50 +1,58 @@
 /*
- * svix-react-ui-dashboard — default theme
+ * svix-react-ui-dashboard — Svix-matched theme
  *
- * Ships a light (default) + dark palette and all component classes.
+ * Matches the official Svix App Portal design system:
+ *   Figtree font, Chakra UI–derived palette, compact radii.
+ *
  * Override any CSS custom property or class in your own stylesheet
  * loaded AFTER this one. See README for customisation guide.
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
 /* ── Palette (light — default) ────────────────────────── */
 :root {
-  --svix-bg:             #f4f5f7;
+  --svix-bg:             #f7f8fa;
   --svix-surface:        #ffffff;
-  --svix-surface-hover:  #edeef1;
-  --svix-border:         #d8dae0;
-  --svix-text:           #1a1a2e;
-  --svix-text-dim:       #6b7085;
-  --svix-accent:         #6944e0;
-  --svix-accent-hover:   #5835c7;
-  --svix-green:          #16a364;
+  --svix-surface-hover:  #f2f3f5;
+  --svix-border:         #eeeced;
+  --svix-text:           #1f2937;
+  --svix-text-dim:       #6b7280;
+  --svix-accent:         #3b82f6;
+  --svix-accent-hover:   #2563eb;
+  --svix-green:          #16a34a;
   --svix-yellow:         #ca8a04;
   --svix-red:            #dc2626;
-  --svix-blue:           #2563eb;
-  --svix-radius:         10px;
-  --svix-modal-backdrop: rgba(0,0,0,0.35);
-  --svix-shadow:         0 1px 3px rgba(0,0,0,0.1);
+  --svix-blue:           #3b82f6;
+  --svix-radius:         8px;
+  --svix-radius-sm:      6px;
+  --svix-radius-lg:      12px;
+  --svix-modal-backdrop: rgba(0,0,0,0.4);
+  --svix-shadow:         0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --svix-shadow-lg:      0 4px 16px rgba(0,0,0,0.1);
 }
 
 /* ── Palette (dark) ───────────────────────────────────── */
 [data-theme="dark"] {
-  --svix-bg:             #0a0a0f;
-  --svix-surface:        #12121a;
-  --svix-surface-hover:  #1a1a25;
-  --svix-border:         #2a2a3a;
-  --svix-text:           #e4e4ef;
-  --svix-text-dim:       #8888a0;
-  --svix-accent:         #7c5cfc;
-  --svix-accent-hover:   #9478ff;
+  --svix-bg:             #0f1117;
+  --svix-surface:        #1a1c23;
+  --svix-surface-hover:  #22252e;
+  --svix-border:         #2e3039;
+  --svix-text:           #e5e7eb;
+  --svix-text-dim:       #9ca3af;
+  --svix-accent:         #60a5fa;
+  --svix-accent-hover:   #93bbfd;
   --svix-green:          #34d399;
   --svix-yellow:         #fbbf24;
   --svix-red:            #f87171;
   --svix-blue:           #60a5fa;
   --svix-modal-backdrop: rgba(0,0,0,0.6);
-  --svix-shadow:         0 1px 3px rgba(0,0,0,0.4);
+  --svix-shadow:         0 1px 3px rgba(0,0,0,0.3);
+  --svix-shadow-lg:      0 4px 16px rgba(0,0,0,0.3);
 }
 
 /*
- * Bridge: map --svix-* tokens → --* tokens used by component JSX.
+ * Bridge: map --svix-* tokens → short --* tokens used by component JSX.
  * If the host app already defines --bg, --surface, etc. these
  * assignments are overridden and the host palette wins.
  */
@@ -63,27 +71,37 @@
   --red:            var(--svix-red);
   --blue:           var(--svix-blue);
   --radius:         var(--svix-radius);
+  --radius-sm:      var(--svix-radius-sm);
+  --radius-lg:      var(--svix-radius-lg);
   --modal-backdrop: var(--svix-modal-backdrop);
   --shadow:         var(--svix-shadow);
+  --shadow-lg:      var(--svix-shadow-lg);
 }
 
 /* ── Container base ───────────────────────────────────── */
 .svix-ui {
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-               Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.67;
+  letter-spacing: 0.2px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 .svix-ui *, .svix-ui *::before, .svix-ui *::after { box-sizing: border-box; }
 .svix-ui h1, .svix-ui h2, .svix-ui h3, .svix-ui h4, .svix-ui h5, .svix-ui h6 {
   color: var(--text);
-  margin: 0 0 8px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
 }
+.svix-ui h2 { font-size: 20px; font-weight: 700; }
+.svix-ui h3 { font-size: 16px; }
+.svix-ui h4 { font-size: 14px; }
 .svix-ui a { color: var(--accent); text-decoration: none; }
-.svix-ui a:hover { color: var(--accent-hover); }
+.svix-ui a:hover { color: var(--accent-hover); text-decoration: underline; }
+.svix-ui p { margin: 0 0 8px; }
 
 /* ── Base form elements ────────────────────────────────── */
 .svix-ui input,
@@ -92,18 +110,22 @@
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 10px 14px;
-  border-radius: var(--radius);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   outline: none;
   width: 100%;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   font-family: inherit;
   box-sizing: border-box;
+  line-height: 1.5;
 }
 .svix-ui input:focus,
 .svix-ui select:focus,
-.svix-ui textarea:focus { border-color: var(--accent); }
+.svix-ui textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
 .svix-ui select { cursor: pointer; }
 .svix-ui textarea { resize: vertical; min-height: 80px; }
 
@@ -111,18 +133,23 @@
   background: none;
   color: var(--text);
   border: none;
-  padding: 10px 20px;
-  border-radius: var(--radius);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
   font-family: inherit;
+  line-height: 1.5;
 }
 .svix-ui button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── Buttons ───────────────────────────────────────────── */
-.svix-ui .btn-sm { padding: 6px 14px; font-size: 12px; background: var(--accent); color: #fff; }
+.svix-ui .btn-sm {
+  padding: 6px 14px; font-size: 13px; font-weight: 500;
+  background: var(--accent); color: #fff;
+  border-radius: var(--radius-sm);
+}
 .svix-ui .btn-sm:hover { background: var(--accent-hover); }
 
 .svix-ui .btn-ghost {
@@ -133,60 +160,66 @@
 .svix-ui .btn-ghost:hover { background: var(--surface-hover); color: var(--text); }
 
 .svix-ui .btn-danger {
-  background: rgba(248,113,113,0.15);
+  background: rgba(220,38,38,0.08);
   color: var(--red);
-  border: 1px solid rgba(248,113,113,0.3);
+  border: 1px solid rgba(220,38,38,0.2);
 }
-.svix-ui .btn-danger:hover { background: rgba(248,113,113,0.25); }
+.svix-ui .btn-danger:hover { background: rgba(220,38,38,0.15); }
 
 /* ── Badges ────────────────────────────────────────────── */
 .badge {
   font-size: 11px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.05em; padding: 3px 10px; border-radius: 20px;
+  letter-spacing: 0.04em; padding: 2px 8px; border-radius: 4px;
   display: inline-block;
 }
-.badge-active  { background: rgba(52,211,153,0.15); color: var(--green); }
-.badge-planned { background: rgba(251,191,36,0.15); color: var(--yellow); }
+.badge-active  { background: rgba(22,163,74,0.1); color: var(--green); }
+.badge-planned { background: rgba(202,138,4,0.1); color: var(--yellow); }
 
 /* ── Tabs ──────────────────────────────────────────────── */
 .wh-tabs {
-  display: flex; gap: 2px; margin-bottom: 24px;
+  display: flex; gap: 0; margin-bottom: 20px;
   border-bottom: 1px solid var(--border);
-  overflow-x: auto; -webkit-overflow-scrolling: touch;
 }
 .svix-ui .wh-tab {
-  padding: 10px 20px; font-size: 13px; font-weight: 600;
+  padding: 10px 16px; font-size: 14px; font-weight: 500;
   color: var(--text-dim); cursor: pointer;
-  border-bottom: 2px solid transparent; border-top: none; border-left: none; border-right: none;
+  border-bottom: 2px solid transparent;
+  border-top: none; border-left: none; border-right: none;
   transition: color 0.15s, border-color 0.15s;
   background: none; border-radius: 0;
   white-space: nowrap; flex-shrink: 0;
 }
 .svix-ui .wh-tab:hover { color: var(--text); background: none; }
-.svix-ui .wh-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: none; }
+.svix-ui .wh-tab.active {
+  color: var(--text);
+  border-bottom-color: var(--text);
+  font-weight: 600;
+  background: none;
+}
 
 /* ── Toolbar ───────────────────────────────────────────── */
 .wh-toolbar {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
 }
-.wh-toolbar h3 { font-size: 16px; font-weight: 600; }
+.wh-toolbar h3 { font-size: 16px; font-weight: 600; margin: 0; }
 
 /* ── Table ─────────────────────────────────────────────── */
 .wh-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .wh-table { width: 100%; border-collapse: collapse; min-width: 480px; }
 .wh-table th {
-  text-align: left; font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.06em;
-  color: var(--text-dim); padding: 8px 12px;
+  text-align: left; font-size: 12px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--text-dim); padding: 10px 12px;
   background: var(--surface); border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
 .wh-table td {
-  padding: 12px; font-size: 13px; color: var(--text);
-  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 12px; font-size: 14px; color: var(--text);
+  background: var(--surface); border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
+.wh-table tr { transition: background 0.1s; }
 .wh-table tr:hover td { background: var(--surface-hover); }
 
 /* ── Empty state ───────────────────────────────────────── */
@@ -196,18 +229,18 @@
 }
 .wh-empty p:first-child {
   font-size: 16px; font-weight: 600;
-  color: var(--text); margin-bottom: 8px;
+  color: var(--text); margin-bottom: 6px;
 }
 
 /* ── Form container ────────────────────────────────────── */
 .wh-form {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; padding: 24px; margin-bottom: 20px;
+  border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
 }
-.wh-form .field { margin-bottom: 16px; }
+.wh-form .field { margin-bottom: 14px; }
 .wh-form label {
   display: block; font-size: 12px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.05em;
+  text-transform: uppercase; letter-spacing: 0.04em;
   color: var(--text-dim); margin-bottom: 6px;
 }
 .wh-form .form-row { display: flex; gap: 12px; align-items: flex-end; }
@@ -215,27 +248,27 @@
 
 /* ── Mono-spaced URL chip ──────────────────────────────── */
 .wh-url {
-  font-family: 'SF Mono','Menlo','Consolas',monospace;
-  font-size: 12px; color: var(--blue); word-break: break-all;
+  font-family: 'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace;
+  font-size: 13px; color: var(--text); word-break: break-all;
 }
 
 /* ── Card block ────────────────────────────────────────── */
 .wh-api-card {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; padding: 24px; margin-bottom: 20px;
+  border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
 }
-.wh-api-card h4 { font-size: 14px; margin-bottom: 12px; color: var(--text); }
+.wh-api-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
 .wh-api-card pre {
   background: var(--bg); border: 1px solid var(--border);
-  border-radius: 8px; padding: 16px; font-size: 12px;
-  font-family: 'SF Mono','Menlo','Consolas',monospace;
+  border-radius: var(--radius-sm); padding: 14px; font-size: 13px;
+  font-family: 'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace;
   color: var(--text-dim); overflow-x: auto;
   white-space: pre-wrap; word-break: break-all;
 }
 .wh-api-card code {
-  font-family: 'SF Mono','Menlo','Consolas',monospace;
+  font-family: 'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace;
   background: var(--bg); padding: 2px 6px;
-  border-radius: 4px; font-size: 12px; color: var(--accent);
+  border-radius: 4px; font-size: 13px; color: var(--text);
 }
 
 /* ── Status dots ───────────────────────────────────────── */
@@ -246,9 +279,9 @@
 
 /* ── Error banner ──────────────────────────────────────── */
 .error-banner {
-  background: rgba(248,113,113,0.1); border: 1px solid var(--red);
-  color: var(--red); padding: 12px 16px; border-radius: var(--radius);
-  font-size: 13px; margin-bottom: 16px;
+  background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2);
+  color: var(--red); padding: 12px 16px; border-radius: var(--radius-sm);
+  font-size: 14px; margin-bottom: 16px;
 }
 
 /* ── Modals ────────────────────────────────────────────── */
@@ -260,9 +293,9 @@
 }
 .modal-box {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 16px; padding: 24px; width: 100%;
+  border-radius: var(--radius-lg); padding: 24px; width: 100%;
   max-width: 520px; max-height: 85vh; overflow-y: auto;
-  position: relative;
+  position: relative; box-shadow: var(--shadow-lg);
 }
 .modal-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
 .svix-ui .modal-close {
@@ -273,35 +306,35 @@
 .svix-ui .modal-close:hover { color: var(--text); background: none; }
 .modal-footer {
   display: flex; justify-content: flex-end; gap: 8px;
-  margin-top: 24px; padding-top: 16px;
+  margin-top: 20px; padding-top: 16px;
   border-top: 1px solid var(--border);
   flex-wrap: wrap;
 }
 
 /* ── Option cards (used inside modals) ─────────────────── */
 .option-card {
-  border: 2px solid var(--border); border-radius: 12px;
-  padding: 16px 20px; cursor: pointer;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .option-card:hover { border-color: var(--text-dim); background: var(--surface-hover); }
-.option-card.selected { border-color: var(--accent); background: rgba(124,92,252,0.08); }
-.option-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-.option-card p { color: var(--text-dim); font-size: 12px; line-height: 1.4; margin: 0; }
+.option-card.selected { border-color: var(--accent); background: rgba(59,130,246,0.05); }
+.option-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.option-card p { color: var(--text-dim); font-size: 13px; line-height: 1.5; margin: 0; }
 .option-card code {
-  font-size: 12px;
-  font-family: 'SF Mono','Menlo','Consolas',monospace;
+  font-size: 13px;
+  font-family: 'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace;
   color: var(--accent);
 }
 
 /* ── Pill toggle group ─────────────────────────────────── */
 .pill-group {
   display: flex; gap: 0;
-  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden;
 }
 .svix-ui .pill-btn {
-  padding: 6px 14px; font-size: 12px; font-weight: 600;
+  padding: 6px 14px; font-size: 13px; font-weight: 500;
   background: none; border: none;
   border-right: 1px solid var(--border);
   color: var(--text-dim); cursor: pointer; border-radius: 0;
@@ -309,7 +342,7 @@
 }
 .svix-ui .pill-btn:last-child { border-right: none; }
 .svix-ui .pill-btn:hover { background: var(--surface-hover); color: var(--text); }
-.svix-ui .pill-btn.active { background: rgba(124,92,252,0.15); color: var(--accent); }
+.svix-ui .pill-btn.active { background: rgba(59,130,246,0.08); color: var(--accent); }
 
 /* ── Responsive layout helpers ────────────────────────── */
 .wh-page-header {
@@ -330,11 +363,24 @@
 .wh-docs-content { flex: 1; overflow-y: auto; padding: 28px 36px 80px; }
 
 /* ── Utility ───────────────────────────────────────────── */
-.mono { font-family: 'SF Mono','Menlo','Consolas',monospace; }
-.page-sub { color: var(--text-dim); font-size: 14px; margin-bottom: 28px; }
-.field { margin-bottom: 16px; }
+.mono { font-family: 'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace; }
+.page-sub { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+.field { margin-bottom: 14px; }
 .form-row { display: flex; gap: 12px; align-items: flex-end; }
 .form-row .field { flex: 1; margin-bottom: 0; }
+
+/* ── Delivery stats progress bar ──────────────────────── */
+.wh-progress-bar {
+  height: 8px; border-radius: 4px; background: var(--border);
+  overflow: hidden; display: flex; margin-top: 12px;
+}
+
+/* ── Sidebar metadata label ───────────────────────────── */
+.wh-meta-label {
+  font-size: 12px; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--text-dim); margin-bottom: 4px;
+}
+.wh-meta-value { font-size: 14px; color: var(--text); }
 
 /* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -355,14 +401,14 @@
   .wh-docs-content { padding: 20px 16px 60px; }
 
   .wh-api-card { padding: 16px; }
-  .modal-box   { padding: 20px; border-radius: 12px; }
+  .modal-box   { padding: 20px; border-radius: var(--radius); }
 
-  .wh-tab { padding: 10px 14px; font-size: 12px; }
+  .wh-tab { padding: 10px 14px; font-size: 13px; }
 }
 
 @media (max-width: 480px) {
   .svix-ui { font-size: 14px; }
   .wh-toolbar h3 { font-size: 14px; }
-  .wh-api-card { padding: 12px; border-radius: 10px; }
-  .wh-form { padding: 16px; border-radius: 10px; }
+  .wh-api-card { padding: 14px; border-radius: var(--radius-sm); }
+  .wh-form { padding: 14px; border-radius: var(--radius-sm); }
 }

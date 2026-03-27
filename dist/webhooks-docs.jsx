@@ -31,20 +31,20 @@ function ApiDocsPage({ info, onBack }) {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const pre = { marginTop: 6, background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, padding: 14, fontSize: 11, fontFamily: 'SF Mono,Menlo,Consolas,monospace', color: 'var(--text-dim)', whiteSpace: 'pre-wrap', wordBreak: 'break-all', lineHeight: 1.7 };
-  const epBlock = { marginTop: 16, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' };
+  const pre = { marginTop: 6, background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, padding: 14, fontSize: 13, fontFamily: "'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace", color: 'var(--text-dim)', whiteSpace: 'pre-wrap', wordBreak: 'break-all', lineHeight: 1.7 };
+  const epBlock = { marginTop: 16, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' };
   const epHeader = (method) => ({
-    display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)',
+    display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid var(--border)', background: 'var(--bg)',
   });
-  const methodColors = { GET: { bg: 'rgba(62,207,142,0.12)', color: '#3ecf8e' }, POST: { bg: 'rgba(91,168,245,0.12)', color: '#5ba8f5' }, PUT: { bg: 'rgba(240,192,64,0.12)', color: '#f0c040' }, PATCH: { bg: 'rgba(245,158,11,0.12)', color: '#f59e0b' }, DELETE: { bg: 'rgba(239,68,68,0.12)', color: '#ef4444' } };
-  const methodBadge = (m) => ({ fontFamily: 'SF Mono,Menlo,Consolas,monospace', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4, background: methodColors[m]?.bg, color: methodColors[m]?.color, minWidth: 48, textAlign: 'center', display: 'inline-block' });
-  const epPath = { fontFamily: 'SF Mono,Menlo,Consolas,monospace', fontSize: 12, color: 'var(--text)' };
+  const methodColors = { GET: { bg: 'rgba(22,163,74,0.08)', color: '#16a34a' }, POST: { bg: 'rgba(59,130,246,0.08)', color: '#3b82f6' }, PUT: { bg: 'rgba(202,138,4,0.08)', color: '#ca8a04' }, PATCH: { bg: 'rgba(245,158,11,0.08)', color: '#f59e0b' }, DELETE: { bg: 'rgba(220,38,38,0.08)', color: '#dc2626' } };
+  const methodBadge = (m) => ({ fontFamily: "'SFMono-Regular','Menlo','Consolas',monospace", fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4, background: methodColors[m]?.bg, color: methodColors[m]?.color, minWidth: 48, textAlign: 'center', display: 'inline-block' });
+  const epPath = { fontFamily: "'SFMono-Regular','Menlo','Consolas',monospace", fontSize: 13, color: 'var(--text)' };
   const epBody = { padding: 16 };
-  const sHead = { fontSize: 20, fontWeight: 700, marginTop: 40, marginBottom: 10, paddingTop: 20, borderTop: '1px solid var(--border)', color: 'var(--text)' };
+  const sHead = { fontSize: 18, fontWeight: 700, marginTop: 36, marginBottom: 10, paddingTop: 20, borderTop: '1px solid var(--border)', color: 'var(--text)' };
   const paramsTable = { width: '100%', borderCollapse: 'collapse', margin: '10px 0' };
   const thStyle = { textAlign: 'left', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)', fontWeight: 700, padding: '6px 10px', borderBottom: '1px solid var(--border)' };
   const tdStyle = { fontSize: 12, padding: '6px 10px', borderBottom: '1px solid var(--border)', color: 'var(--text-dim)' };
-  const tdMono = { ...tdStyle, fontFamily: 'SF Mono,Menlo,Consolas,monospace', color: 'var(--text)', fontWeight: 500 };
+  const tdMono = { ...tdStyle, fontFamily: "'SFMono-Regular','Menlo','Consolas',monospace", color: 'var(--text)', fontWeight: 500 };
   const tagReq = { fontSize: 9, fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', marginLeft: 4 };
   const tagOpt = { fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginLeft: 4 };
 
@@ -52,7 +52,7 @@ function ApiDocsPage({ info, onBack }) {
     <div style={epBlock} data-endpoint={id}>
       <div style={epHeader(method)}>
         <span style={methodBadge(method)}>{method}</span>
-        <span style={epPath} dangerouslySetInnerHTML={{ __html: path.replaceAll(/\{([^}]+)\}/g, '<span style="color:#7c5cfc">{$1}</span>') }} />
+        <span style={epPath} dangerouslySetInnerHTML={{ __html: path.replaceAll(/\{([^}]+)\}/g, '<span style="color:#3b82f6">{$1}</span>') }} />
         <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-dim)' }}>{summary}</span>
       </div>
       <div style={epBody}>{children}</div>
@@ -122,7 +122,7 @@ function ApiDocsPage({ info, onBack }) {
             {sec.items && sec.items.map((item) => (
               <div key={item.id} onClick={() => scrollTo(item.id)}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '3px 8px', fontSize: 11, color: 'var(--text-dim)', cursor: 'pointer', borderRadius: 4 }}
-                onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                onMouseOver={e => e.currentTarget.style.background = 'var(--surface-hover)'}
                 onMouseOut={e => e.currentTarget.style.background = 'none'}>
                 <span style={{ ...methodBadge(item.m), fontSize: 8, padding: '1px 4px', minWidth: 30 }}>{item.m}</span>
                 <span>{item.label}</span>
@@ -141,12 +141,12 @@ function ApiDocsPage({ info, onBack }) {
             Complete API reference for the Svix webhook relay. All examples use your credentials — copy and run directly.
           </p>
 
-          <div style={{ background: 'rgba(124,92,252,0.08)', border: '1px solid rgba(124,92,252,0.25)', borderRadius: 10, padding: '14px 18px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ background: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 8, padding: '14px 18px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
             <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--accent)', fontWeight: 700 }}>Base URL</span>
             <code style={{ fontSize: 12 }}>{baseUrl}/api/v1</code>
           </div>
 
-          <div style={{ background: 'var(--surface)', borderLeft: '3px solid var(--accent)', padding: '12px 16px', borderRadius: '0 8px 8px 0', marginBottom: 20 }}>
+          <div style={{ background: 'var(--surface)', borderLeft: '3px solid var(--accent)', padding: '12px 16px', borderRadius: '0 6px 6px 0', marginBottom: 20 }}>
             <div style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.6 }}>
               <strong style={{ color: 'var(--text)' }}>Authentication:</strong> All requests require
               <code style={{ fontSize: 11 }}>Authorization: Bearer {'<token>'}</code>. Your token is shown in API Credentials above.
@@ -178,7 +178,7 @@ function ApiDocsPage({ info, onBack }) {
           </div>
 
           {eventTypes && eventTypes.length > 0 && (
-            <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+            <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: 16, marginBottom: 16 }}>
               <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#3ecf8e', display: 'inline-block', animation: 'none' }}></span>
                 Your Event Types

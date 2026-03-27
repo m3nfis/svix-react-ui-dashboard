@@ -62,7 +62,7 @@ function RetryScheduleEditor({ eventTypeName }) {
     React.createElement('div', {style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}},
       React.createElement('div', {style:{fontSize:12,fontWeight:600}},
         'Retry Schedule',
-        isCustom && React.createElement('span', {style:{fontSize:10,marginLeft:6,padding:'1px 6px',borderRadius:4,background:'rgba(124,92,252,0.15)',color:'var(--accent)'}}, 'Custom')
+        isCustom && React.createElement('span', {style:{fontSize:10,marginLeft:6,padding:'1px 6px',borderRadius:4,background:'rgba(59,130,246,0.08)',color:'var(--accent)'}}, 'Custom')
       ),
       cfg.eventTypes.editRetrySchedule && React.createElement('div', {style:{display:'flex',gap:6}},
         !editing && React.createElement('button', {className:'btn-sm btn-ghost',style:{padding:'2px 8px',fontSize:10},onClick:() => { setEditing(true); if (!input) setInput(activeSchedule.join(', ')); }}, 'Edit'),
@@ -72,7 +72,7 @@ function RetryScheduleEditor({ eventTypeName }) {
     React.createElement('div', {style:{display:'flex',alignItems:'center',gap:4,flexWrap:'wrap',marginBottom:editing?10:0}},
       ...activeSchedule.map((s, i) => [
         i > 0 && React.createElement('span', {key:'a'+i,style:{color:'var(--text-dim)',fontSize:9}}, '→'),
-        React.createElement('span', {key:'v'+i,style:{fontSize:10,padding:'2px 6px',borderRadius:4,background:isCustom?'rgba(124,92,252,0.12)':'rgba(255,255,255,0.06)',color:isCustom?'var(--accent)':'var(--text-dim)',fontFamily:'monospace',fontWeight:500}}, formatRetryInterval(s))
+        React.createElement('span', {key:'v'+i,style:{fontSize:10,padding:'2px 6px',borderRadius:4,background:isCustom?'rgba(59,130,246,0.08)':'rgba(0,0,0,0.04)',color:isCustom?'var(--accent)':'var(--text-dim)',fontFamily:'monospace',fontWeight:500}}, formatRetryInterval(s))
       ]).flat().filter(Boolean),
       React.createElement('span', {style:{fontSize:10,color:'var(--text-dim)',marginLeft:4}}, `(${activeSchedule.length} retries)`)
     ),
@@ -178,7 +178,7 @@ function EventCatalogPanel() {
             <div onClick={() => setSelected(null)}
               style={{fontSize:12,padding:'6px 8px',borderRadius:6,cursor:'pointer',marginBottom:8,
                 fontWeight:600,color: selected === null ? 'var(--accent)' : 'var(--text-dim)',
-                background: selected === null ? 'rgba(124,92,252,0.12)' : 'transparent'}}>
+                background: selected === null ? 'rgba(59,130,246,0.06)' : 'transparent'}}>
               All ({eventTypes.length})
             </div>
             {Object.entries(groups).sort().map(([group, types]) => (
@@ -189,7 +189,7 @@ function EventCatalogPanel() {
                     onClick={() => setSelected(et.name === selected ? null : et.name)}
                     style={{
                       fontSize:12,padding:'4px 8px 4px 16px',borderRadius:6,cursor:'pointer',marginBottom:1,
-                      background: selected === et.name ? 'rgba(124,92,252,0.12)' : 'transparent',
+                      background: selected === et.name ? 'rgba(59,130,246,0.06)' : 'transparent',
                       color: selected === et.name ? 'var(--accent)' : 'var(--text-dim)',
                     }}>
                     {et.name}
