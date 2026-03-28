@@ -19,7 +19,7 @@
   "author": "m3nfis",
   "repository": {
     "type": "git",
-    "url": "https://github.com/m3nfis/svix-react-ui-dashboard.git"
+    "url": "git+https://github.com/m3nfis/svix-react-ui-dashboard.git"
   },
   "bugs": {
     "url": "https://github.com/m3nfis/svix-react-ui-dashboard/issues"
@@ -28,5 +28,12 @@
   "peerDependencies": {
     "react": ">=17",
     "react-dom": ">=17"
+  },
+  "scripts": {
+    "test": "npx playwright test",
+    "test:report": "npx playwright test --reporter=list,json && node tests/generate-report.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
   }
 }
