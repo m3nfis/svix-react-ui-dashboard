@@ -11,10 +11,10 @@
     "webhook-management"
   ],
   "files": [
-    "dist"
+    "src"
   ],
-  "main": "dist/webhooks.jsx",
-  "style": "dist/svix-ui.css",
+  "main": "src/webhooks.jsx",
+  "style": "src/svix-ui.css",
   "license": "MIT",
   "author": "m3nfis",
   "repository": {

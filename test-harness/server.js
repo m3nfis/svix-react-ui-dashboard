@@ -31,7 +31,7 @@ const app = express();
 
 app.use(
   '/vendor/svix-ui',
-  express.static(path.join(__dirname, '..', 'dist'))
+  express.static(path.join(__dirname, '..', 'src'))
 );
 
 app.get('/', (_req, res) => {

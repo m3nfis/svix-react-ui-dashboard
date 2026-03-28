@@ -17,7 +17,7 @@ npm install @m3nfis/svix-react-ui-dashboard
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { SvixWebhooksDashboard } from '@m3nfis/svix-react-ui-dashboard';
-import '@m3nfis/svix-react-ui-dashboard/dist/svix-ui.css';
+import '@m3nfis/svix-react-ui-dashboard/src/svix-ui.css';
 
 function App() {
   return (
@@ -189,7 +189,7 @@ npm install git+https://github.com/m3nfis/svix-react-ui-dashboard.git
 
 If your app uses React via UMD script tags instead of a bundler, load the modules directly:
 
-### 1. Serve the `dist/` folder
+### 1. Serve the `src/` folder
 
 Mount the installed package as a static route in your app server:
 
@@ -379,7 +379,7 @@ If `__vibeySvixClient` is not yet available (initial render), it falls back to c
 
 ## Test Harness
 
-The `test-harness/` directory contains a self-contained Express app that serves the `dist/` components with live Svix API credentials. This is what the Playwright tests run against.
+The `test-harness/` directory contains a self-contained Express app that serves the `src/` components with live Svix API credentials. This is what the Playwright tests run against.
 
 ### Setup
 
@@ -423,7 +423,7 @@ Test coverage:
 
 ```
 svix-react-ui-dashboard/
-├── dist/
+├── src/
 │   ├── svix-ui.css                # Default dark/light theme
 │   ├── webhooks-core.jsx          # Config context, API client, shared modals
 │   ├── webhooks-explainer.jsx     # "How it works" developer guide
@@ -435,7 +435,7 @@ svix-react-ui-dashboard/
 │   └── webhooks.jsx               # SvixWebhooksDashboard HOC + WebhooksPage
 ├── test-harness/
 │   ├── public/index.html          # Test page (credentials injected by server)
-│   ├── server.js                  # Express server serving dist/ + injecting .env
+│   ├── server.js                  # Express server serving src/ + injecting .env
 │   ├── .env.example               # Template for your Svix credentials
 │   └── package.json
 ├── tests/
@@ -463,7 +463,7 @@ svix-react-ui-dashboard/
 
 1. Fork the repo
 2. Create a feature branch (`git checkout -b feat/my-change`)
-3. Make your changes in `dist/`
+3. Make your changes in `src/`
 4. Set up the test harness (`cd test-harness && cp .env.example .env && npm install`)
 5. Run `npm test` from the project root to verify
 6. Commit and push (`git push origin feat/my-change`)
