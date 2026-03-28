@@ -1,4 +1,4 @@
-# @m3nfis/svix-react-ui-dashboard
+svix react ui  dashboard
 
 Drop-in React UI for managing [Svix](https://github.com/svix/svix-webhooks) webhooks — endpoints, event catalog, message logs, activity overview, and a full API reference page.
 
