@@ -3,3 +3,5 @@ node_modules/
 *.log
 test-results/
 playwright-report/
+test-harness/.env
+test-harness/node_modules/

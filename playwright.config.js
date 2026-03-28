@@ -20,6 +20,13 @@ module.exports = defineConfig({
     actionTimeout: 8_000,
     navigationTimeout: 30_000,
   },
+  webServer: {
+    command: 'npm start',
+    cwd: './test-harness',
+    port: 3333,
+    reuseExistingServer: true,
+    timeout: 15_000,
+  },
   projects: [
     {
       name: 'chromium',

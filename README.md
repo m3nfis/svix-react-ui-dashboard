@@ -377,6 +377,48 @@ If `__vibeySvixClient` is not yet available (initial render), it falls back to c
 
 ---
 
+## Test Harness
+
+The `test-harness/` directory contains a self-contained Express app that serves the `dist/` components with live Svix API credentials. This is what the Playwright tests run against.
+
+### Setup
+
+```bash
+cd test-harness
+cp .env.example .env      # fill in your Svix credentials
+npm install
+npm start                  # → http://localhost:3333
+```
+
+### `.env` variables
+
+| Variable | Description |
+|----------|-------------|
+| `SVIX_API_URL` | Your Svix instance URL (e.g. `https://api.svix.com`) |
+| `SVIX_AUTH_TOKEN` | Svix auth token or JWT |
+| `SVIX_APP_UID` | Application UID to scope the dashboard to |
+
+The server injects these into the HTML at serve time — no credentials are committed to the repo.
+
+---
+
+## Running Tests
+
+The test suite uses [Playwright](https://playwright.dev/) with mocked API responses (no live Svix instance needed to run tests).
+
+```bash
+npm test                   # runs all 60 tests
+npm run test:report        # runs tests + generates test-results/REPORT.md
+```
+
+Playwright auto-starts the test harness on port 3333 via the `webServer` config, so you don't need to start it manually. You do still need a `.env` file in `test-harness/` (the server validates it on boot).
+
+Test coverage:
+- **100%** of Svix API call patterns (21 unique endpoints)
+- **>90%** of UI components and interactions
+
+---
+
 ## Project Structure
 
 ```
@@ -391,6 +433,24 @@ svix-react-ui-dashboard/
 │   ├── webhooks-events.jsx        # Event catalog + retry schedule editor
 │   ├── webhooks-endpoints.jsx     # Endpoints CRUD, detail, testing, advanced
 │   └── webhooks.jsx               # SvixWebhooksDashboard HOC + WebhooksPage
+├── test-harness/
+│   ├── public/index.html          # Test page (credentials injected by server)
+│   ├── server.js                  # Express server serving dist/ + injecting .env
+│   ├── .env.example               # Template for your Svix credentials
+│   └── package.json
+├── tests/
+│   ├── fixtures/
+│   │   ├── api-interceptor.js     # Playwright route interceptor (mocks all API calls)
+│   │   └── mock-data.js           # Deterministic mock Svix API responses
+│   ├── activity.spec.js
+│   ├── api-docs.spec.js
+│   ├── endpoint-detail.spec.js
+│   ├── endpoints.spec.js
+│   ├── event-catalog.spec.js
+│   ├── hoc-ui.spec.js
+│   ├── logs.spec.js
+│   └── generate-report.js         # Markdown report generator
+├── playwright.config.js
 ├── .gitignore
 ├── LICENSE                        # MIT
 ├── package.json
@@ -404,9 +464,10 @@ svix-react-ui-dashboard/
 1. Fork the repo
 2. Create a feature branch (`git checkout -b feat/my-change`)
 3. Make your changes in `dist/`
-4. Test by mounting in any React 18 UMD app
-5. Commit and push (`git push origin feat/my-change`)
-6. Open a pull request
+4. Set up the test harness (`cd test-harness && cp .env.example .env && npm install`)
+5. Run `npm test` from the project root to verify
+6. Commit and push (`git push origin feat/my-change`)
+7. Open a pull request
 
 ---
 
